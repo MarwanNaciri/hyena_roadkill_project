@@ -55,13 +55,13 @@ sync.ffs_db
 
 # ~ 5. In the script folder
 
-05_script/calculation_of_predictors/
-05_script/downloaded_scripts/
-05_script/figures_plots/
-05_script/glm
-05_script/old_useless/
-05_script/statistical_tests/
-05_script/environmental_covariates/original_scripts_sent_to_me/
+05_scripts/calculation_of_predictors/
+05_scripts/downloaded_scripts/
+05_scripts/figures_plots/
+05_scripts/glm
+05_scripts/old_useless/
+05_scripts/statistical_tests/
+05_scripts/environmental_covariates/original_scripts_sent_to_me/
 
 csv_coordinates_to_shapefile_02-11.R
 den_locations_processing.R
