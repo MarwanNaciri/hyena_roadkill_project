@@ -37,3 +37,208 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+
+# ~ 0. In the mother folder
+
+sync.ffs_db
+
+# ~ 1. In the literature folder
+
+01_literature/
+
+# ~ 4. In the raw_data folder
+
+04_raw_data/
+
+
+
+# ~ 5. In the script folder
+
+05_script/calculation_of_predictors/
+05_script/downloaded_scripts/
+05_script/figures_plots/
+05_script/glm
+05_script/old_useless/
+05_script/statistical_tests/
+05_script/environmental_covariates/original_scripts_sent_to_me/
+
+csv_coordinates_to_shapefile_02-11.R
+den_locations_processing.R
+draw_polygon_on_map.R
+process_buildings_2020-03-21.R
+process_rivers_2020-03-02.R
+
+# ~ 6. In the processed_data folder --------------------------------------------
+
+06_processed_data/borders/
+06_processed_data/glm_data/
+06_processed_data/migration/
+
+# In the hyena folder
+06_processed_data/hyenas/Den_locations_processed.csv
+06_processed_data/hyenas/Den_locations_processed_I.csv
+06_processed_data/hyenas/Den_locations_processed_M.csv
+06_processed_data/hyenas/Den_locations_processed_P.csv
+
+# In the carcass folder
+06_processed_data/carcasses/correct_GPS_shift_04-2021/
+06_processed_data/carcasses/determine_shift_before_2000/
+06_processed_data/carcasses/questions_answers_carcasses/
+
+06_processed_data/carcasses/hy_carcasses.dbf
+06_processed_data/carcasses/hy_carcasses.prj
+06_processed_data/carcasses/hy_carcasses.shp
+06_processed_data/carcasses/hy_carcasses.shx
+
+06_processed_data/carcasses/hy.before.2000.WSG72.04-2021.dbf
+06_processed_data/carcasses/hy.before.2000.WSG72.04-2021.shp
+06_processed_data/carcasses/hy.before.2000.WSG72.04-2021.shx
+
+06_processed_data/carcasses/hy.before.2000.WSG72.reprojected.04-2021.dbf
+06_processed_data/carcasses/hy.before.2000.WSG72.reprojected.04-2021.prj
+06_processed_data/carcasses/hy.before.2000.WSG72.reprojected.04-2021.shp
+06_processed_data/carcasses/hy.before.2000.WSG72.reprojected.04-2021.shx
+
+06_processed_data/carcasses/hy.before.2000.WSG72.04-2021.dbf
+06_processed_data/carcasses/hy.before.2000.WSG72.04-2021.shp
+06_processed_data/carcasses/hy.before.2000.WSG72.04-2021.shx
+
+
+06_processed_data/carcasses/hy_clan_members_F_complete.csv
+06_processed_data/carcasses/hy_unknown_sex.xlsx
+06_processed_data/carcasses/table_Roadkill_Marwan_ME.xlsx
+06_processed_data/carcasses/table_Roadkill_Marwan.xlsx
+06_processed_data/carcasses/table_01.xlsx
+06_processed_data/carcasses/11_hy.carcasses.certainty_with_comments_SB.xlsx
+06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial.csv
+06_processed_data/carcasses/13_hy.before.2000.csv
+06_processed_data/carcasses/criteria_collision_&_location_certainty.docx
+06_processed_data/carcasses/female. roadkilled.clan.members_lactation_info.xlsx
+
+
+
+
+
+
+# In the building folder
+06_processed_data/buildings/buildings.polygons.cropped.65km.circle.09-11.cpg
+06_processed_data/buildings/buildings.polygons.cropped.65km.circle.09-11.dbf
+06_processed_data/buildings/buildings.polygons.cropped.65km.circle.09-11.prj
+06_processed_data/buildings/buildings.polygons.cropped.65km.circle.09-11.shp
+06_processed_data/buildings/buildings.polygons.cropped.65km.circle.09-11.shx
+
+06_processed_data/buildings/buildings_polygons_for_analyses_2021-05-25_bis_bis.cpg
+06_processed_data/buildings/buildings_polygons_for_analyses_2021-05-25_bis_bis.dbf
+06_processed_data/buildings/buildings_polygons_for_analyses_2021-05-25_bis_bis.prj
+06_processed_data/buildings/buildings_polygons_for_analyses_2021-05-25_bis_bis.shp
+06_processed_data/buildings/buildings_polygons_for_analyses_2021-05-25_bis_bis.shx
+
+06_processed_data/buildings/READ_ME.txt
+
+
+# In the water folder
+06_processed_data/water/rivers_for_analyses_2021-05-25_bis.cpg
+06_processed_data/water/rivers_for_analyses_2021-05-25_bis.dbf
+06_processed_data/water/rivers_for_analyses_2021-05-25_bis.prj
+06_processed_data/water/rivers_for_analyses_2021-05-25_bis.shp
+06_processed_data/water/rivers_for_analyses_2021-05-25_bis.shx
+
+06_processed_data/water/waterbodies_for_analyses_2021-05-25_bis.cpg
+06_processed_data/water/waterbodies_for_analyses_2021-05-25_bis.dbf
+06_processed_data/water/waterbodies_for_analyses_2021-05-25_bis.prj
+06_processed_data/water/waterbodies_for_analyses_2021-05-25_bis.shp
+06_processed_data/water/waterbodies_for_analyses_2021-05-25_bis.shx
+
+06_processed_data/water/READ_ME.txt
+
+
+# In the road folder
+06_processed_data/roads/Segmented/
+
+06_processed_data/roads/planned.new.highway.serengeti.cpg
+06_processed_data/roads/planned.new.highway.serengeti.dbf
+06_processed_data/roads/planned.new.highway.serengeti.prj
+06_processed_data/roads/planned.new.highway.serengeti.shp
+06_processed_data/roads/planned.new.highway.serengeti.shx
+
+06_processed_data/roads/square.dbf
+06_processed_data/roads/square.shp
+06_processed_data/roads/square.shx
+
+06_processed_data/roads/square.serengeti.cpg
+06_processed_data/roads/square.serengeti.dbf
+06_processed_data/roads/square.serengeti.prj
+06_processed_data/roads/square.serengeti.shp
+06_processed_data/roads/square.serengeti.shx
+
+06_processed_data/roads/visitor.center.cpg
+06_processed_data/roads/visitor.center.dbf
+06_processed_data/roads/visitor.center.prj
+06_processed_data/roads/visitor.center.shp
+06_processed_data/roads/visitor.center.shx
+
+06_processed_data/roads/coords of the roads added to the network.txt
+
+06_processed_data/roads/SNP.roads.QGIS/old/
+
+06_processed_data/roads/SNP.roads.QGIS/major_roads.cpg
+06_processed_data/roads/SNP.roads.QGIS/major_roads.dbf
+06_processed_data/roads/SNP.roads.QGIS/major_roads.prj
+06_processed_data/roads/SNP.roads.QGIS/major_roads.shp
+06_processed_data/roads/SNP.roads.QGIS/major_roads.shx
+
+
+# In the land cover folder
+06_processed_data/land_cover/snp.land.cover.tif
+
+06_processed_data/land_cover/cropping.serengeti.square.cpg
+06_processed_data/land_cover/cropping.serengeti.square.dbf
+06_processed_data/land_cover/cropping.serengeti.square.prj
+06_processed_data/land_cover/cropping.serengeti.square.shp
+06_processed_data/land_cover/cropping.serengeti.square.shx
+
+06_processed_data/land_cover/cropping.polygon.following.boundaries.and.square.cpg
+06_processed_data/land_cover/cropping.polygon.following.boundaries.and.square.dbf
+06_processed_data/land_cover/cropping.polygon.following.boundaries.and.square.prj
+06_processed_data/land_cover/cropping.polygon.following.boundaries.and.square.shp
+06_processed_data/land_cover/cropping.polygon.following.boundaries.and.square.shx
+
+06_processed_data/land_cover/cropping.polygon.following.boundaries.and.square.2.cpg
+06_processed_data/land_cover/cropping.polygon.following.boundaries.and.square.2.dbf
+06_processed_data/land_cover/cropping.polygon.following.boundaries.and.square.2.prj
+06_processed_data/land_cover/cropping.polygon.following.boundaries.and.square.2.shp
+06_processed_data/land_cover/cropping.polygon.following.boundaries.and.square.2.shx
+
+06_processed_data/land_cover/Reed_2009/landcover legend Reed 2009.png
+06_processed_data/land_cover/Reed_2009/land.cover.types.in.SNP.csv
+06_processed_data/land_cover/Reed_2009/land.cover.types.in.SNP_less_detailed.csv
+
+06_processed_data/land_cover/Reed_2009/serengeti.land.cover.Reed.2009.cropped.tif
+06_processed_data/land_cover/Reed_2009/serengeti.land.cover.Reed.2009.cropped.zoomed.in.tif
+06_processed_data/land_cover/Reed_2009/serengeti.land.cover.Reed.2009.cropped.zoomed.in.2.tif
+
+
+
+
+# ~ 7. In the intermediate results folder
+
+07_intermediate_results/
+
+
+# ~ 8. In the presentations folder
+
+08_presentations/
+
+# ~ 9. In the report folder
+
+09_report/
+
+# ~ 10. In the meetings folder
+
+10_meetings/
+
+# ~ 11. In the manuscript folder
+
+11_manuscript/
+
