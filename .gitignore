@@ -63,11 +63,14 @@ sync.ffs_db
 05_scripts/statistical_tests/
 05_scripts/environmental_covariates/original_scripts_sent_to_me/
 
+GLM_bayesian_negbin.R
 csv_coordinates_to_shapefile_02-11.R
 den_locations_processing.R
 draw_polygon_on_map.R
 process_buildings_2020-03-21.R
 process_rivers_2020-03-02.R
+
+
 
 # ~ 6. In the processed_data folder --------------------------------------------
 
