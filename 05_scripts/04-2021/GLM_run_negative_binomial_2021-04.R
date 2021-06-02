@@ -15,10 +15,11 @@ library(broom)
 Sys.setenv(LANG = "en")
 
 
-########################################################################################
-# ALL AVAILABLE CARCASSES --------------------------------------------------------------
 
-# New dataset
+# ALL AVAILABLE CARCASSES ------------------------------------------------------
+
+# Chose the buffer size  before loading the corresponding dataframe containing 
+# all the data required to run the model
 buffer.size <- 500
 buffer.size <- 1000
 
@@ -60,7 +61,7 @@ DHARMa::testResiduals(glm_nb_all)
 DHARMa::plotResiduals(glm_nb_all, table.glm$road_importance) # No quantile deviation and no quadratic effect
 DHARMa::plotResiduals(glm_nb_all, table.glm$distance_amenity_km)
 DHARMa::plotResiduals(glm_nb_all, table.glm$distance_water_km) # No quantile deviation and no quadratic effect
-DHARMa::plotResiduals(glm_nb_all, table.glm$shrubland)
+DHARMa::plotResiduals(glm_nb_all, table.glm$woodland)
 
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
