@@ -14,12 +14,12 @@ library(cowplot)
 Sys.setenv(LANG = "en")
 
 
-# A. EFFECT OF AGE +++++++++++++++++++++++++++++++++++++++++++++++++-------------
+# A. EFFECT OF AGE =============================================================
 
 # Import data --------------*
-Clan_size_year_clan <- read_csv("6_processed_data/hyenas/Clan_size_year_clan.csv", 
+Clan_size_year_clan <- read_csv("06_processed_data/hyenas/Clan_size_year_clan.csv", 
                                 col_types = cols(X1 = col_skip()))
-hy_carcasses <- read_delim("6_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_04-2021.csv", 
+hy_carcasses <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_10-2021.csv", 
                            ";", escape_double = FALSE, trim_ws = TRUE)
 
 # Calculate the average age distribution ----------------------
@@ -149,7 +149,7 @@ obs2 <- c(nb.ad + nb.unkn, nb.sub, nb.cub) # unknown age considered as adults.
 #   ylab("number of carcasses") +
 #   xlab("")
 # 
-# ggsave("09-02 age expected VS observed.svg", path = "7_intermediate_results/2021-04/plots/Age_Sex",
+# ggsave("09-02 age expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
 #        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
@@ -176,7 +176,7 @@ df.age <- data.frame(age = c("adults and subadults", "adults and subadults", "cu
     xlab("")
 )
 
-ggsave("7_intermediate_results/2021-04/plots/4.2 age expected VS observed with unknowns.png", 
+ggsave("07_intermediate_results/2021-04/plots/4.2 age expected VS observed with unknowns.png", 
        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
@@ -223,7 +223,7 @@ hy_carcasses_0.5 <- hy_carcasses %>%
 #   ylab("number of carcasses") +
 #   xlab("")
 # 
-# ggsave("09-02 0.5 age expected VS observed.svg", path = "7_intermediate_results/2021-04/plots/Age_Sex",
+# ggsave("09-02 0.5 age expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
 #        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 # Adults and subadults VS cubs (with unknowns considered adults)
@@ -246,7 +246,7 @@ df.age <- data.frame(age = c("adults and subadults", "adults and subadults", "cu
     xlab("")
 )
 
-ggsave("09-02 0.5 age expected VS observed with unknowns.svg", path = "7_intermediate_results/2021-04/plots/Age_Sex",
+ggsave("09-02 0.5 age expected VS observed with unknowns.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
@@ -294,7 +294,7 @@ obs2 <- c(nb.ad + nb.unkn, nb.sub, nb.cub) # unknown age considered as adults.
 #   ylab("number of carcasses") +
 #   xlab("")
 # 
-# ggsave("09-02 0.75 age expected VS observed.svg", path = "7_intermediate_results/2021-04/plots/Age_Sex",
+# ggsave("09-02 0.75 age expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
 #        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 # Adults and subadults VS cubs (with unknowns considered adults)
@@ -316,7 +316,7 @@ df.age <- data.frame(age = c("adults and subadults", "adults and subadults", "cu
     ylab("number of carcasses") +
     xlab("")
 )
-ggsave("09-02 0.75 age expected VS observed with unknowns.svg", path = "7_intermediate_results/2021-04/plots/Age_Sex",
+ggsave("09-02 0.75 age expected VS observed with unknowns.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
@@ -324,14 +324,13 @@ ggsave("09-02 0.75 age expected VS observed with unknowns.svg", path = "7_interm
 
 
 
-
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
-#B. EFFECT OF SEX +++++++++++++++++++++++++++++++++++++++++++++++---------------
+#___________________________________________________________________________####
+#B. EFFECT OF SEX ==============================================================
 
 # Import data --------------*
-Clan_size_year_clan <- read_csv("6_processed_data/hyenas/Clan_size_year_clan.csv", 
+Clan_size_year_clan <- read_csv("06_processed_data/hyenas/Clan_size_year_clan.csv", 
                                 col_types = cols(X1 = col_skip()))
-hy_carcasses <- read_delim("6_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_04-2021.csv", 
+hy_carcasses <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_10-2021.csv", 
                            ";", escape_double = FALSE, trim_ws = TRUE)
 
 # Calculate the average adult and subadult sex ratio -------------
@@ -404,7 +403,7 @@ ad.sex.ratio <- probabilities[1,1]/(probabilities[1,1] + probabilities[1,2] + pr
 subad.sex.ratio <- probabilities[1,5]/(probabilities[1,5] + probabilities[1,6])
 
 
-## ALL CARCASSES -----------------------------------
+# ~ 1. ALL CARCASSES -----------------------------------
 # ~~~ a. Count individuals of each sex ------------
 
 # ----------- Adults --
@@ -452,7 +451,7 @@ N.subad <- nb.subad.F + as.numeric(subad.counts[2,2])
 #   ylab("number of carcasses") +
 #   xlab("")
 # 
-# ggsave("09-02 ad sex expected VS observed.svg", path = "7_intermediate_results/2021-04/plots/Age_Sex",
+# ggsave("09-02 ad sex expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
 #        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
@@ -478,12 +477,13 @@ df.sex.ad.subad <- rbind(df.sex.ad, df.sex.subad)
     # scale_fill_grey(start = 0.8, end = 0.2) +
     scale_fill_manual(values = c("#999999", "#E69F00")) +
     theme_classic() +
-    theme(legend.title = element_blank()) +
+    theme(legend.title = element_blank(),
+          legend.position = 'none') +
     scale_x_discrete(limits = c("females", "males")) +
     labs(x = "", 
          y = "number of carcasses")
 )
-ggsave("7_intermediate_results/2021-04/plots/4.2 ad sex expected VS observed with unknowns.svg", 
+ggsave("07_intermediate_results/2021-04/plots/4.2 ad sex expected VS observed with unknowns.svg", 
        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
@@ -501,7 +501,7 @@ ggsave("7_intermediate_results/2021-04/plots/4.2 ad sex expected VS observed wit
          y = "number of carcasses")
 )
 
-ggsave("7_intermediate_results/2021-04/plots/4.3 subad sex expected VS observed with unknowns.svg", 
+ggsave("07_intermediate_results/2021-04/plots/4.3 subad sex expected VS observed with unknowns.svg", 
        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
@@ -516,7 +516,7 @@ ggsave("7_intermediate_results/2021-04/plots/4.3 subad sex expected VS observed 
     scale_fill_manual(values = c("#999999", "#E69F00")) +
     theme_classic() +
     theme(legend.title = element_blank(),
-          legend.position='none') +
+          legend.position = 'none') +
     scale_x_discrete(limits = c("females", "males")) +
     labs(x = "",
          y = "number of carcasses") +
@@ -524,7 +524,7 @@ ggsave("7_intermediate_results/2021-04/plots/4.3 subad sex expected VS observed 
   
 )
 
-ggsave("7_intermediate_results/2021-04/plots/4.2 ad & subad sex expected VS observed with unknowns.png", 
+ggsave("07_intermediate_results/2021-04/plots/4.2 ad & subad sex expected VS observed with unknowns.png", 
        width = 5, height = 3)
 
 
@@ -580,7 +580,7 @@ N.subad <- nb.subad.F + as.numeric(subad.counts[2,2])
 #   ylab("number of carcasses") +
 #   xlab("")
 # 
-# ggsave("09-02 0.5 ad sex expected VS observed.svg", path = "7_intermediate_results/2021-04/plots/Age_Sex",
+# ggsave("09-02 0.5 ad sex expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
 #        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
@@ -602,7 +602,7 @@ df.sex.ad <- data.frame(sex = c("females", "females", "males", "males"),
     ylab("number of carcasses") +
     xlab("")
 )
-ggsave("09-02 0.5 ad sex expected VS observed with unknowns.svg", path = "7_intermediate_results/2021-04/plots/Age_Sex",
+ggsave("09-02 0.5 ad sex expected VS observed with unknowns.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
@@ -624,7 +624,7 @@ df.sex.subad <- data.frame(sex = c("females", "females", "males", "males"),
     ylab("number of carcasses") +
     xlab("")
 )
-ggsave("09-02 0.5 subad expected VS observed.svg", path = "7_intermediate_results/2021-04/plots/Age_Sex",
+ggsave("09-02 0.5 subad expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
@@ -676,12 +676,13 @@ df.sex.ad <- data.frame(sex = c("females", "females", "males", "males"),
     # scale_fill_grey(start = 0.8, end = 0.2) +
     scale_fill_manual(values = c("#999999", "#E69F00")) +
     theme_classic() +
-    theme(legend.title = element_blank()) +
-    scale_x_discrete(limits=c("females", "males")) +
+    theme(legend.position = "",
+          legend.title = element_blank()) +
+    scale_x_discrete(limits = c("females", "males")) +
     ylab("number of carcasses") +
     xlab("")
 )
-ggsave("09-02 0.75 ad sex expected VS observed with unknowns.svg", path = "7_intermediate_results/2021-04/plots/Age_Sex",
+ggsave("09-02 0.75 ad sex expected VS observed with unknowns.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
@@ -703,17 +704,17 @@ df.sex.subad <- data.frame(sex = c("females", "females", "males", "males"),
     xlab("")
 )
 
-ggsave("09-02 0.75 subad sex expected VS observed.svg", path = "7_intermediate_results/2021-04/plots/Age_Sex",
+ggsave("09-02 0.75 subad sex expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
        width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
-# C. EFFECT OF RANK +++++++++++++++++++++++++++++++++++++++++++++++-------------
+#___________________________________________________________________________####
+# C. EFFECT OF RANK============================================================
 
 # All the carcasses of females from the three studied clans have collision 
 # certainty scores >= 0.75.
 
-hy_carcasses_clan_members <- read_delim("6_processed_data/carcasses/3_hy.clan.members.csv", 
+hy_carcasses_clan_members <- read_delim("06_processed_data/carcasses/3_hy.clan.members.csv", 
                                         ";", escape_double = FALSE, trim_ws = TRUE)
 
 # Remove the males and the female cub
@@ -728,41 +729,41 @@ hy_carcasses_clan_members <- hy_carcasses_clan_members %>%
 
 # ~~~ b. Plot --------------
 
-(plot.rank <- ggplot(hy_carcasses_clan_members, 
-                     aes(x = ID_clan, y = standardized_rank)) +
-   geom_point(size = 2.5) +
-   geom_hline(yintercept=0, size = 0.5, color = "black") +
-   geom_hline(yintercept=0.4, size = 0.5, linetype = "dotted", color = "red") +
-   theme_classic() +
-   theme(axis.text.x = element_text(size=10, angle = 60, hjust = 1),
-         legend.text = element_text(size = 11)) +
-   scale_x_discrete(limits = c("I744", "P619", "I383", "P159", "I484", "I705", "M661", "P518"),
-                    labels = c("Hy_074", "Hy_069", "Hy_055", "Hy_050", "Hy_089", "Hy_088", "Hy_059", "Hy_083")) +  
-   ylim(-1, 1) +
-   labs(x = "ID", 
-        y = "standardized rank")
-)
-
-ggsave("7_intermediate_results/2021-04/plots/4.4 rank.png", 
-       width = unit(3.5,"cm"), height = unit(3.5,"cm"))
-
-# With dot observed median, line expected median
-(plot.rank.dotplot <- ggplot(hy_carcasses_clan_members, 
-                             aes(x = collision_certainty_score_NEW, y = standardized_rank)) +
-    geom_dotplot(binaxis = 'y', stackdir = 'center') +
-    annotate("point", x = 1, y = 0.4, 
-             colour = "red", size = 3) +
-    # geom_hline(yintercept = 0.4, size = 0.5, color = "red") +
-    geom_hline(yintercept = 0, size = 0.5, color = "black") +
-    theme_classic() +
-    theme(axis.text.x = element_blank(),
-          axis.ticks.x = element_blank()) +
-    ylim(-1, 1) +
-    labs(y = "standardized rank",
-         x = ""))
-
-ggsave("7_intermediate_results/2021-04/plots/4.4 rank dotplot.png", 
-       width = unit(1.5,"cm"), height = unit(3,"cm"))
+# (plot.rank <- ggplot(hy_carcasses_clan_members, 
+#                      aes(x = ID_clan, y = standardized_rank)) +
+#    geom_point(size = 2.5) +
+#    geom_hline(yintercept=0, size = 0.5, color = "black") +
+#    geom_hline(yintercept=0.4, size = 0.5, linetype = "dotted", color = "red") +
+#    theme_classic() +
+#    theme(axis.text.x = element_text(size=10, angle = 60, hjust = 1),
+#          legend.text = element_text(size = 11)) +
+#    scale_x_discrete(limits = c("I744", "P619", "I383", "P159", "I484", "I705", "M661", "P518"),
+#                     labels = c("Hy_074", "Hy_069", "Hy_055", "Hy_050", "Hy_089", "Hy_088", "Hy_059", "Hy_083")) +  
+#    ylim(-1, 1) +
+#    labs(x = "ID", 
+#         y = "standardized rank")
+# )
+# 
+# ggsave("07_intermediate_results/2021-04/plots/4.4 rank.png", 
+#        width = unit(3.5,"cm"), height = unit(3.5,"cm"))
+# 
+# # With dot observed median, line expected median
+# (plot.rank.dotplot <- ggplot(hy_carcasses_clan_members, 
+#                              aes(x = collision_certainty_score_NEW, y = standardized_rank)) +
+#     geom_dotplot(binaxis = 'y', stackdir = 'center') +
+#     annotate("point", x = 1, y = 0.4, 
+#              colour = "red", size = 3) +
+#     # geom_hline(yintercept = 0.4, size = 0.5, color = "red") +
+#     geom_hline(yintercept = 0, size = 0.5, color = "black") +
+#     theme_classic() +
+#     theme(axis.text.x = element_blank(),
+#           axis.ticks.x = element_blank()) +
+#     ylim(-1, 1) +
+#     labs(y = "standardized rank",
+#          x = ""))
+# 
+# ggsave("07_intermediate_results/2021-04/plots/4.4 rank dotplot.png", 
+#        width = unit(1.5,"cm"), height = unit(3,"cm"))
 
 
 # With dot observed median, dot expected median
@@ -774,12 +775,12 @@ median.df <- data.frame(collision_certainty_score_NEW = c(0.98, 0.98),
                              aes(x = collision_certainty_score_NEW, y = standardized_rank)) +
     geom_dotplot(binaxis = 'y', stackdir = 'center', fill = "black",
                  stackratio = 2, dotsize = 1.4) +
-    
 
     geom_point(data = median.df, 
                aes(x = collision_certainty_score_NEW, y = value, fill = type),
                size = 2.75, shape = 24, color = "black") +
-    scale_fill_manual(values = c("#999999", "#E69F00")) +
+    scale_fill_manual(values = c("#999999", "#E69F00"),
+                      labels = c("expected \nmedian", "observed \nmedian")) +
     # annotate("point", x = 1, y = 0.4,
     #          colour = "black", size = 3) +
     # annotate("point", x = 1, y = 0, 
@@ -803,47 +804,113 @@ median.df <- data.frame(collision_certainty_score_NEW = c(0.98, 0.98),
          x = "") 
 )
 
-ggsave("7_intermediate_results/2021-04/plots/4.4 rank dotplot.3.png", 
+ggsave("07_intermediate_results/2021-04/plots/4.4 rank dotplot.3.png", 
        width = unit(1.75,"cm"), height = unit(3,"cm"))
 
-# (plot.rank.dotplot <- ggplot(hy_carcasses_clan_members, 
-#                              aes(x = collision_certainty_score_NEW, y = standardized_rank)) +
-#     # geom_boxplot() +
-#     geom_dotplot(binaxis = 'y', stackdir = 'center') +
-#     geom_hline(yintercept = 0.4, size = 0.5, color = "red") +
-#     
-#     geom_hline(yintercept = 0, size = 0.5, color = "black") +
-#     theme_classic() +
-#     theme(axis.text.x = element_blank(),
-#           axis.ticks.x = element_blank()) +
-#     ylim(-1, 1) +
-#     labs(y = "Standardized rank",
-#          x = ""))
-# 
-# ggsave("7_intermediate_results/2021-04/plots/4.4 rank dotplot.png", 
-#        width = unit(1.5,"cm"), height = unit(3,"cm"))
+
+# With line observed median, line expected median
+median.df <- data.frame(collision_certainty_score_NEW = c(0.98, 0.98),
+                        type = c("expected", "observed"),
+                        value = c(0, 0.4))
+
+(plot.rank.dotplot <- ggplot(hy_carcasses_clan_members, 
+                             aes(x = collision_certainty_score_NEW, y = standardized_rank)) +
+    geom_dotplot(binaxis = 'y', stackdir = 'center', fill = "black",
+                 stackratio = 2, dotsize = 1.4) +
+    geom_hline(data = median.df, 
+               aes(yintercept = value, color = type)) +
+    
+    # geom_hline(yintercept = median.df$value) +
+               # size = 2.75, shape = 24, color = "black") +
+    scale_color_manual(values = c("#999999", "#E69F00"),
+                      labels = c("expected \nmedian", "observed \nmedian")) +
+    # annotate("point", x = 1, y = 0.4,
+    #          colour = "black", size = 3) +
+    # annotate("point", x = 1, y = 0, 
+    #          colour = "black", size = 3) +
+    # annotate("point", x = 1, y = 0.4, 
+    #          colour = "#E69F00", size = 2.4,) +
+    # annotate("point", x = 1, y = 0, 
+    #          colour = "#999999", size = 2.4) +
+    # geom_hline(yintercept = 0.4, size = 0.5, color = "red") +
+    theme_classic() +
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          legend.position = c(0.5, 0.2),
+          legend.title = element_blank(),
+          # legend.background = element_rect(fill = "white",
+          #                                  size = 0.5, # linetype = "solid", 
+          #                                  colour = "white")
+          legend.background = element_blank()) +
+    # legend.position = "none") +
+    ylim(-1, 1) +
+    labs(y = "social status",
+         x = "") 
+)
+
+ggsave("07_intermediate_results/2021-04/plots/4.4 rank dotplot.4.png", 
+       width = unit(1.75,"cm"), height = unit(3,"cm"))
 
 
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
-# D. Construct the figure +++++++++++++++++++++++++++++++++++++++++++++++-------
+#___________________________________________________________________________####
+# D. Construct the figure ======================================================
 
+# ~ 1. ALL CARCASSES -----------------------------------------------------------
 (
   figure.4 <- ggdraw() +
-    draw_plot(plot.age, x = 0.02,  y = 0, width = 0.33, height = 1) +
-    draw_plot(plot.sex.ad.subad, x = 0.35, y = 0.045, width = 0.43, height = 0.955) +
+    draw_plot(plot.age, x = 0.02,  y = 0, width = 0.40, height = 1) +
+    draw_plot(plot.sex.ad, x = 0.42, y = 0.045, width = 0.27, height = 0.955) +
     
-    draw_plot(plot.rank.dotplot, x = 0.82, y = 0.095, width = 0.18, height = 0.905) + 
+    draw_plot(plot.rank.dotplot, x = 0.71, y = 0.095, width = 0.21, height = 0.905) + 
     
     draw_plot_label(label = c("(a)", "(b)", "(c)"),
-                    x = c(0, 0.35, 0.80), y = c(1, 1, 1), size = 14) 
+                    x = c(0, 0.40, 0.69), y = c(1, 1, 1), size = 14) 
   
 )
 
-save_plot("7_intermediate_results/2021-04/plots/figure 4 (rank dotplot).png", 
+# save_plot("07_intermediate_results/2021-04/plots/figure 4 (rank dotplot).png", 
+#           plot = figure.4,
+#           ncol = 2,
+#           nrow = 2,
+#           base_height = 1.5,
+#           base_asp =  3) #1.618)
+
+save_plot("11_manuscript/V3 Figures/figure 4 raw.svg", 
           plot = figure.4,
           ncol = 2,
           nrow = 2,
-          base_height = 1.5,
-          base_asp =  3) #1.618)
-?save_plot
+          base_height = 1.35,
+          base_asp =  2.7) #1.618)
+
+
+# ~ 2. CARCASSES >= 0.75 -------------------------------------------------------
+
+(
+  figure.S3 <- ggdraw() +
+    draw_plot(plot.age.0.75, x = 0.02,  y = 0, width = 0.40, height = 1) +
+    draw_plot(plot.sex.ad.0.75, x = 0.42, y = 0.045, width = 0.27, height = 0.955) +
+
+    draw_plot_label(label = c("(a)", "(b)"),
+                    x = c(0, 0.40), y = c(1, 1), size = 14) 
+  
+)
+
+# save_plot("11_manuscript/V3 Figures/figure S3 raw.png", 
+          #           plot = figure.4,
+#           ncol = 2,
+#           nrow = 2,
+#           base_height = 1.5,
+#           base_asp =  3) #1.618)
+
+
+save_plot("11_manuscript/V3 Figures/figure S3 raw.svg", 
+          plot = figure.S3,
+          ncol = 2,
+          nrow = 2,
+          base_height = 1.35,
+          base_asp =  2.7) #1.618)
+
+
+
 ################################### END ########################################
+

@@ -1,8 +1,8 @@
-###############################################################################################
-#                                                                                             #
-#                               Plot the maps of the study area                               #        
-#                                                                                             #
-###############################################################################################
+#------------------------------------------------------------------------------#
+#                                                                              #
+#                       Plot the maps of the study area                        #        
+#                                                                              #
+#------------------------------------------------------------------------------#
 
 library(rgdal)
 library(raster)
@@ -13,6 +13,9 @@ library(shinyjs)
 library(sp)
 library(sf)
 library(tidyverse)
+
+
+# See https://rdrr.io/cran/tmap/man/tmap_arrange.html to arrange the maps
 
 
 ### Map Serengeti migration --------
@@ -56,7 +59,7 @@ major.roads <- rgdal::readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
                               layer = "major_roads")
 
 roads <- rgdal::readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
-                        layer = "snp.roads.acc.to.map.road.w.carcass.del")
+                        layer = "snp_roads_for_analyses_25-05-2021")
 
 
 tmap_mode("view")
@@ -89,7 +92,7 @@ major.roads <- rgdal::readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
                               layer = "major_roads")
 
 roads <- rgdal::readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
-                        layer = "snp.roads.acc.to.map.road.w.carcass.del")
+                        layer = "snp_roads_for_analyses_25-05-2021")
 
 hy.carcasses <- rgdal::readOGR(dsn  = "06_processed_data/carcasses",
                                layer = "hy_carcasses_04-2021")
@@ -224,14 +227,14 @@ major.roads <- rgdal::readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
                               layer = "major_roads")
 
 roads <- rgdal::readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
-                        layer = "snp.roads.acc.to.map.road.w.carcass.del")
+                        layer = "snp_roads_for_analyses_25-05-2021")
 
 
 hy.carcasses <- rgdal::readOGR(dsn  = "06_processed_data/carcasses",
                                layer = "hy_carcasses_04-2021")
 
-hy.carcasses <- rgdal::readOGR(dsn  = "06_processed_data/carcasses",
-                               layer = "hy_carcasses_clan_members_04-2021")
+# hy.carcasses <- rgdal::readOGR(dsn  = "06_processed_data/carcasses",
+#                                layer = "hy_carcasses_clan_members_04-2021")
 
 circle_65km <- rgdal::readOGR(dsn  =  "06_processed_data/roads",
                               layer = "visitor.center.buffer.65km")
@@ -246,17 +249,19 @@ boundary2 <- raster::crop(boundary, crop.square)
 
 
 tmap_mode("view")
-(map3 <- tm_shape(boundary2) +
+(map3 <- 
+    tm_shape(boundary2) +
     tm_polygons(col  =  "#d6e9d6", alpha = 1, boundary.col = "#5ea65c") +
     tm_shape(roads.65km) +
     tm_lines(col  =  "black", lwd  =  1) +
     tm_shape(major.roads.65km) +
     tm_lines(lty = "solid", col  =  "black", lwd  =  2.5) +
+    tm_shape(circle_65km) +
+    tm_polygons(col  =  "#56B4E9", alpha = 0, boundary.col = "#56B4E9", lwd = 2.5) +
     tm_shape(hy.carcasses) +
     tm_symbols(size = 0.12, col = "#E69F00") +
     #tm_symbols(size  =  0.03, col  =  "#E69F00")
-    tm_shape(circle_65km) +
-    tm_polygons(col  =  "#56B4E9", alpha = 0, boundary.col = "#56B4E9", lwd = 2.5) +
+    
     tm_scale_bar(position=c("left", "bottom"),
                  text.size = 0.75,
                  breaks = c(0, 20, 40)) +
@@ -389,7 +394,7 @@ tmap_save(tm = map3,
 # 
 # 
 # roads <- rgdal::readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
-#                         layer = "snp.roads.acc.to.map.road.w.carcass.del")
+#                         layer = "snp_roads_for_analyses_25-05-2021")
 # 
 # roads.df <- CreateDataFrameRoads(roads)
 # 
@@ -513,7 +518,7 @@ major.roads <- rgdal::readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
                               layer = "major_roads")
 
 roads <- rgdal::readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
-                        layer = "snp.roads.acc.to.map.road.w.carcass.del")
+                        layer = "snp_roads_for_analyses_25-05-2021")
 
 
 circle_65km <- rgdal::readOGR(dsn  =  "06_processed_data/roads",

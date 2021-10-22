@@ -15,7 +15,6 @@ library(broom)
 Sys.setenv(LANG = "en")
 
 
-
 # A. All carcasses --------------------------------------------------------------
 
 # Chose the buffer size  before loading the corresponding dataframe containing
@@ -34,7 +33,6 @@ glm_nb_all <- MASS::glm.nb(formula = nbr_carcasses ~ road_importance + distance_
 summary(glm_nb_all)
 AICcmodavg::AICc(glm_nb_all, return.K = FALSE, second.ord = TRUE,
                  nobs = NULL, c.hat = 1)
-
 
 
 # ~~~ Check the assumptions of the model using DHARMA --------------------------------

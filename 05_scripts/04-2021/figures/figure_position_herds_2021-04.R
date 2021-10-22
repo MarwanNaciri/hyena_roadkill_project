@@ -8,41 +8,55 @@ library(tidyverse)
 library(ggthemes)
 library(ggpubr)
 library(raster)
-# library(viridis)
+library(lubridate)
 Sys.setenv(LANG = "en")
 
-##################################################################################
-# A. For all carcasses ------------------------------------------------------------
+#         #
+#       # | #
+#     #   |  #
+#   #     .   #
+#  ############
 
-hy_carcasses_formatted <- read_delim("6_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_04-2021.csv", 
-                                     ";", escape_double = FALSE, trim_ws = TRUE)
+# See in the "statistical test" folder, in the "effect_time_of_year_with_date_obs_2021-04" 
+# script
 
-hy_carcasses_formatted_spatial <- hy_carcasses_formatted %>%
+# A. Serengeti IV seasons (no transit) -----------------------------------------
+
+# ~ 1. For all carcasses -------------------------------------------------------
+
+hy_carcasses <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_04-2021.csv", 
+                           ";", escape_double = FALSE, trim_ws = TRUE) %>%
   filter(GPS_certainty_score > 0) %>%
   mutate(date_death = as.Date(date_death, format = "%d / %m / %Y"),
          year = year(date_death))
 
+
 # Add variable "position of the migratory herds"
-hy.carcasses.herds.position <- hy_carcasses_formatted_spatial %>%
-  mutate(herds_position = ifelse(date_death %within% interval(ymd(paste0(year, "-05-26")), 
+hy_carcasses_herds_position <- hy_carcasses %>%
+  mutate(herds_position = ifelse(date_death %within% interval(ymd(paste0(year, "-08-01")), 
                                                               ymd(paste0(year, "-10-31"))), 
-                                 "north west", "south east")) %>%
+                                 "north west", 
+                                 ifelse(date_death %within% interval(ymd(paste0(year, "-01-01")),
+                                                                     ymd(paste0(year, "-05-10"))),
+                                        "south east", 
+                                        ifelse(date_death %within% interval(ymd(paste0(year, "-12-21")),
+                                                                            ymd(paste0(year, "-12-31"))),
+                                               "south east", NA)))) %>%
+  filter(!is.na(herds_position)) %>%
   dplyr::select(ID, date_death, herds_position, long, lat, collision_certainty_score_NEW, GPS_certainty_score, age, sex)
 
-hy.carcasses.herds.position.ad <- hy.carcasses.herds.position %>%
+hy_carcasses_herds_position_ad <- hy_carcasses_herds_position %>%
   filter(age %in% c("adult", "unknown", "subadult"))
 
 
-roads.ggplot.map <- read_csv("7_intermediate_results/plots/Migratory_herds/roads.map.ggplot2.csv", 
-                             col_types = cols(X1 = col_skip()))
-
+roads.ggplot.map <- read_csv("06_processed_data/glm_data_2021-04/roads.segmented.cropped.no.short.df.csv")
 
 # With map + violin plots
 (long_lat_scatter <- ggplot() +
-    geom_line(data = roads.ggplot.map, aes( x = long, y = lat, group = ID_road_seg),
+    geom_path(data = roads.ggplot.map, aes( x = long, y = lat, group = ID_road_seg),
               size = 0.75) +
-    geom_point(data = hy.carcasses.herds.position.ad, aes(x = long, y = lat, color = herds_position),
-               size = 3) +
+    geom_point(data = hy_carcasses_herds_position_ad, aes(x = long, y = lat, color = herds_position),
+               size = 2.5) +
     theme_classic() + #theme_minimal() + 
     scale_color_manual(limits = c("south east", "north west"),
                        values = c("#336600", "#E69F00")) +
@@ -50,12 +64,12 @@ roads.ggplot.map <- read_csv("7_intermediate_results/plots/Migratory_herds/roads
     xlab("Longitude")
 )
 
-(xlong_violin <- ggplot(hy.carcasses.herds.position.ad, 
+(xlong_violin <- ggplot(hy_carcasses_herds_position_ad, 
                         aes(x = herds_position, y = long, fill = herds_position)) +
     geom_violin(size = 0.5, color = "black") +
     geom_boxplot(width=0.1, size = 0.5, color = "black") +
     scale_fill_manual(limits = c("south east", "north west"),
-                       values = c("#336600", "#E69F00")) +
+                      values = c("#336600", "#E69F00")) +
     scale_x_discrete(limits = c("south east", "north west")) +
     theme_classic() +
     theme(axis.title.x = element_blank(),
@@ -67,12 +81,12 @@ roads.ggplot.map <- read_csv("7_intermediate_results/plots/Migratory_herds/roads
 
 
 
-(ylat_violin <- ggplot(hy.carcasses.herds.position.ad, 
+(ylat_violin <- ggplot(hy_carcasses_herds_position_ad, 
                        aes(x = herds_position, y = lat, fill = herds_position)) +
     geom_violin(size = 0.5, color = "black") +
     geom_boxplot(width=0.1, size = 0.5, color = "black") +
     scale_fill_manual(limits = c("south east", "north west"),
-                       values = c("#336600", "#E69F00")) +
+                      values = c("#336600", "#E69F00")) +
     scale_x_discrete(limits = c("south east", "north west")) +
     theme_classic() + 
     theme(axis.title.y = element_blank(),
@@ -86,7 +100,259 @@ ggarrange(xlong_violin, NULL, long_lat_scatter, ylat_violin,
           widths = c(3.5, 2.15), heights = c(2,6),
           common.legend = TRUE)
 
-ggsave("10-24_map-violinplot.adults+subadults.svg", path = "7_intermediate_results/plots/Migratory_herds",
+ggsave(filename = "07_intermediate_results/2021-04/plots/migratory_herds_adults+subadults_Serengeti IV.svg",
+       width = unit(6.48,"cm"), height = unit(8.1,"cm"))
+
+
+
+# ~ 2. For carcasses >=0.5 -----------------------------------------------------
+
+hy_carcasses_0.5 <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_04-2021.csv", 
+                           ";", escape_double = FALSE, trim_ws = TRUE) %>%
+  filter(GPS_certainty_score >= 0.5,
+         collision_certainty_score_NEW >= 0.5) %>%
+  mutate(date_death = as.Date(date_death, format = "%d / %m / %Y"),
+         year = year(date_death))
+
+
+# Add variable "position of the migratory herds"
+hy_carcasses_herds_position_0.5 <- hy_carcasses_0.5 %>%
+  mutate(herds_position = ifelse(date_death %within% interval(ymd(paste0(year, "-08-01")), 
+                                                              ymd(paste0(year, "-10-31"))), 
+                                 "north west", 
+                                 ifelse(date_death %within% interval(ymd(paste0(year, "-01-01")),
+                                                                     ymd(paste0(year, "-05-10"))),
+                                        "south east", 
+                                        ifelse(date_death %within% interval(ymd(paste0(year, "-12-21")),
+                                                                            ymd(paste0(year, "-12-31"))),
+                                               "south east", NA)))) %>%
+  filter(!is.na(herds_position)) %>%
+  dplyr::select(ID, date_death, herds_position, long, lat, collision_certainty_score_NEW, GPS_certainty_score, age, sex)
+
+hy_carcasses_herds_position_ad_0.5 <- hy_carcasses_herds_position_0.5 %>%
+  filter(age %in% c("adult", "unknown", "subadult"))
+
+
+roads.ggplot.map <- read_csv("06_processed_data/glm_data_2021-04/roads.segmented.cropped.no.short.df.csv")
+
+# With map + violin plots
+(long_lat_scatter <- ggplot() +
+    geom_path(data = roads.ggplot.map, aes( x = long, y = lat, group = ID_road_seg),
+              size = 0.75) +
+    geom_point(data = hy_carcasses_herds_position_ad_0.5, aes(x = long, y = lat, color = herds_position),
+               size = 3) +
+    theme_classic() + #theme_minimal() + 
+    scale_color_manual(limits = c("south east", "north west"),
+                       values = c("#336600", "#E69F00")) +
+    ylab("Latitude") +
+    xlab("Longitude")
+)
+
+(xlong_violin <- ggplot(hy_carcasses_herds_position_ad_0.5, 
+                        aes(x = herds_position, y = long, fill = herds_position)) +
+    geom_violin(size = 0.5, color = "black") +
+    geom_boxplot(width=0.1, size = 0.5, color = "black") +
+    scale_fill_manual(limits = c("south east", "north west"),
+                      values = c("#336600", "#E69F00")) +
+    scale_x_discrete(limits = c("south east", "north west")) +
+    theme_classic() +
+    theme(axis.title.x = element_blank(),
+          axis.text.y = element_blank()) +
+    xlab("Position of the \nmigratory herds") +
+    ylim(34.65, 35.14) +
+    coord_flip()
+)
+
+
+
+(ylat_violin <- ggplot(hy_carcasses_herds_position_ad_0.5, 
+                       aes(x = herds_position, y = lat, fill = herds_position)) +
+    geom_violin(size = 0.5, color = "black") +
+    geom_boxplot(width=0.1, size = 0.5, color = "black") +
+    scale_fill_manual(limits = c("south east", "north west"),
+                      values = c("#336600", "#E69F00")) +
+    scale_x_discrete(limits = c("south east", "north west")) +
+    theme_classic() + 
+    theme(axis.title.y = element_blank(),
+          axis.text.x = element_blank()) +
+    xlab("Position of the migratory herds") +
+    ylim(-2.995, -2.005)
+)
+
+ggarrange(xlong_violin, NULL, long_lat_scatter, ylat_violin, 
+          ncol = 2, nrow = 2,  align = "hv", 
+          widths = c(3.5, 2.15), heights = c(2,6),
+          common.legend = TRUE)
+
+ggsave(filename = "07_intermediate_results/2021-04/plots/0.5_migratory_herds_adults+subadults_Serengeti IV.svg",
+       width = unit(6.48,"cm"), height = unit(8.1,"cm"))
+
+
+
+# ~ 3. For carcasses >=0.75 -----------------------------------------------------
+
+hy_carcasses_0.75 <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_04-2021.csv", 
+                               ";", escape_double = FALSE, trim_ws = TRUE) %>%
+  filter(GPS_certainty_score >= 0.75,
+         collision_certainty_score_NEW >= 0.75) %>%
+  mutate(date_death = as.Date(date_death, format = "%d / %m / %Y"),
+         year = year(date_death))
+
+
+# Add variable "position of the migratory herds"
+hy_carcasses_herds_position_0.75 <- hy_carcasses_0.75 %>%
+  mutate(herds_position = ifelse(date_death %within% interval(ymd(paste0(year, "-08-01")), 
+                                                              ymd(paste0(year, "-10-31"))), 
+                                 "north west", 
+                                 ifelse(date_death %within% interval(ymd(paste0(year, "-01-01")),
+                                                                     ymd(paste0(year, "-05-10"))),
+                                        "south east", 
+                                        ifelse(date_death %within% interval(ymd(paste0(year, "-12-21")),
+                                                                            ymd(paste0(year, "-12-31"))),
+                                               "south east", NA)))) %>%
+  filter(!is.na(herds_position)) %>%
+  dplyr::select(ID, date_death, herds_position, long, lat, collision_certainty_score_NEW, GPS_certainty_score, age, sex)
+
+hy_carcasses_herds_position_ad_0.75 <- hy_carcasses_herds_position_0.75 %>%
+  filter(age %in% c("adult", "unknown", "subadult"))
+
+
+roads.ggplot.map <- read_csv("06_processed_data/glm_data_2021-04/roads.segmented.cropped.no.short.df.csv")
+
+# With map + violin plots
+(long_lat_scatter <- ggplot() +
+    geom_path(data = roads.ggplot.map, aes( x = long, y = lat, group = ID_road_seg),
+              size = 0.75) +
+    geom_point(data = hy_carcasses_herds_position_ad_0.75, aes(x = long, y = lat, color = herds_position),
+               size = 3) +
+    theme_classic() + #theme_minimal() + 
+    scale_color_manual(limits = c("south east", "north west"),
+                       values = c("#336600", "#E69F00")) +
+    ylab("Latitude") +
+    xlab("Longitude")
+)
+
+(xlong_violin <- ggplot(hy_carcasses_herds_position_ad_0.75, 
+                        aes(x = herds_position, y = long, fill = herds_position)) +
+    geom_violin(size = 0.5, color = "black") +
+    geom_boxplot(width=0.1, size = 0.5, color = "black") +
+    scale_fill_manual(limits = c("south east", "north west"),
+                      values = c("#336600", "#E69F00")) +
+    scale_x_discrete(limits = c("south east", "north west")) +
+    theme_classic() +
+    theme(axis.title.x = element_blank(),
+          axis.text.y = element_blank()) +
+    xlab("Position of the \nmigratory herds") +
+    ylim(34.65, 35.14) +
+    coord_flip()
+)
+
+
+
+(ylat_violin <- ggplot(hy_carcasses_herds_position_ad_0.75, 
+                       aes(x = herds_position, y = lat, fill = herds_position)) +
+    geom_violin(size = 0.5, color = "black") +
+    geom_boxplot(width=0.1, size = 0.5, color = "black") +
+    scale_fill_manual(limits = c("south east", "north west"),
+                      values = c("#336600", "#E69F00")) +
+    scale_x_discrete(limits = c("south east", "north west")) +
+    theme_classic() + 
+    theme(axis.title.y = element_blank(),
+          axis.text.x = element_blank()) +
+    xlab("Position of the migratory herds") +
+    ylim(-2.995, -2.005)
+)
+
+ggarrange(xlong_violin, NULL, long_lat_scatter, ylat_violin, 
+          ncol = 2, nrow = 2,  align = "hv", 
+          widths = c(3.5, 2.15), heights = c(2,6),
+          common.legend = TRUE)
+
+ggsave(filename = "07_intermediate_results/2021-04/plots/0.75_migratory_herds_adults+subadults_Serengeti IV.svg",
+       width = unit(6.48,"cm"), height = unit(8.1,"cm"))
+
+
+
+
+# B. Marion's seasons (no transit) ---------------------------------------------
+
+# ~ 1. For all carcasses -------------------------------------------------------
+
+hy_carcasses_formatted <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_04-2021.csv", 
+                                     ";", escape_double = FALSE, trim_ws = TRUE)
+
+hy_carcasses_formatted_spatial <- hy_carcasses_formatted %>%
+  filter(GPS_certainty_score > 0) %>%
+  mutate(date_obs = as.Date(x = as.character(date_obs), 
+                            format = "%Y%m%d",
+                            origin = "1970-01-01"),
+         year = year(date_obs))
+
+# Add variable "position of the migratory herds"
+hy_carcasses_herds_position <- hy_carcasses_formatted_spatial %>%
+  mutate(herds_position = ifelse(date_obs %within% interval(ymd(paste0(year, "-05-26")), 
+                                                            ymd(paste0(year, "-10-31"))), 
+                                 "north west", "south east")) %>%
+  dplyr::select(ID, date_obs, herds_position, long, lat, collision_certainty_score_NEW, GPS_certainty_score, age, sex)
+
+hy_carcasses_herds_position_ad <- hy_carcasses_herds_position %>%
+  filter(age %in% c("adult", "unknown", "subadult"))
+
+
+roads.ggplot.map <- read_csv("07_intermediate_results/plots/Migratory_herds/roads.map.ggplot2.csv", 
+                             col_types = cols(X1 = col_skip()))
+
+(long_lat_scatter <- ggplot() +
+    geom_line(data = roads.ggplot.map, aes(x = long, y = lat, group = ID_road_seg),
+              size = 0.75) +
+    geom_point(data = hy_carcasses_herds_position_ad, aes(x = long, y = lat, color = herds_position),
+               size = 3) +
+    theme_classic() + #theme_minimal() + 
+    scale_color_manual(limits = c("south east", "north west"),
+                       values = c("#336600", "#E69F00")) +
+    ylab("Latitude") +
+    xlab("Longitude")
+)
+
+
+(xlong_violin <- ggplot(hy_carcasses_herds_position_ad, 
+                        aes(x = herds_position, y = as.numeric(long), fill = herds_position)) +
+    geom_violin(size = 0.5, color = "black") +
+    geom_boxplot(width=0.1, size = 0.5, color = "black") +
+    scale_fill_manual(limits = c("south east", "north west"),
+                       values = c("#336600", "#E69F00")) +
+    scale_x_discrete(limits = c("south east", "north west")) +
+    theme_classic() +
+    theme(axis.title.x = element_blank(),
+          axis.text.y = element_blank()) +
+    xlab("Position of the \nmigratory herds") +
+    ylim(34.65, 35.143) +
+    coord_flip()
+)
+
+
+
+(ylat_violin <- ggplot(hy_carcasses_herds_position_ad, 
+                       aes(x = herds_position, y = lat, fill = herds_position)) +
+    geom_violin(size = 0.5, color = "black") +
+    geom_boxplot(width=0.1, size = 0.5, color = "black") +
+    scale_fill_manual(limits = c("south east", "north west"),
+                       values = c("#336600", "#E69F00")) +
+    scale_x_discrete(limits = c("south east", "north west")) +
+    theme_classic() + 
+    theme(axis.title.y = element_blank(),
+          axis.text.x = element_blank()) +
+    xlab("Position of the \nmigratory herds") +
+    ylim(-2.995, -2.005)
+)
+
+ggarrange(xlong_violin, NULL, long_lat_scatter, ylat_violin, 
+          ncol = 2, nrow = 2,  align = "hv", 
+          widths = c(3.5, 2.15), heights = c(2,6),
+          common.legend = TRUE)
+
+ggsave("10-24_map-violinplot.adults+subadults.svg", 
+       path = "07_intermediate_results/plots/Migratory_herds",
        width = unit(6.48,"cm"), height = unit(8.1,"cm"))
 
 
@@ -139,7 +405,7 @@ ggarrange(xlong_violin, NULL, long_lat_scatter, ylat_violin,
           widths = c(3.5, 2.15), heights = c(2,6),
           common.legend = TRUE)
 
-ggsave("02-01.test.map-violinplot.adults+subadults.svg", path = "7_intermediate_results/plots/Migratory_herds",
+ggsave("02-01.test.map-violinplot.adults+subadults.svg", path = "07_intermediate_results/plots/Migratory_herds",
        width = unit(6.48,"cm"), height = unit(8.1,"cm"))
 #+++++++++++++++++++++--------------
 
@@ -152,7 +418,7 @@ ggsave("02-01.test.map-violinplot.adults+subadults.svg", path = "7_intermediate_
 
 
 
-# B. For carcasses >=0.5 ----------------------------------------------------------
+# ~ 2. For carcasses >=0.5 ----------------------------------------------------------
 
 X0_hy_carcasses_formatted <- read_delim("6_processed_data/carcasses/0_hy.carcasses.formatted.csv", 
                                         ";", escape_double = FALSE, trim_ws = TRUE)
@@ -238,8 +504,7 @@ ggsave("08-28_0.5.map-violinplot.adults+subadults.svg", path = "7_intermediate_r
 
 
 
-# C.For carcasses >=0.75 ---------------------------------------------------------
-
+# ~ 3. For carcasses >=0.75 ---------------------------------------------------------
 
 hy_carcasses_formatted_spatial_0.75 <- read_delim("6_processed_data/carcasses/0_hy.carcasses.formatted.csv", 
                                                   ";", escape_double = FALSE, trim_ws = TRUE) %>%

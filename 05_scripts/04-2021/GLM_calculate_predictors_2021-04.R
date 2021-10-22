@@ -34,6 +34,8 @@ roads <- rgdal::readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
 roads.df <- CreateDataFrameRoads(roads) %>%
   mutate(ID = as.factor(ID))
 
+
+
 #==============================================================================#
 # STEP 2: Segment the roads ----------------------------------------------------
 
@@ -46,23 +48,6 @@ roads.segmented.df <- SegmentationDf(roads.df,     # ~20 seconds
 
 
 
-
-x <- unique(roads.segmented.df$ID_road_seg)                                                             
-
-
-(long_lat_scatter <- ggplot() +
-    geom_line(data = roads.segmented.df, 
-              aes(x = long, y = lat, group = ID_road_seg, color = color),
-              size = 0.75) +
-    geom_point(data = midpoint.and.length, 
-               aes(x = long_midpoint, y = lat_midpoint),
-               color = "yellow", shape = 3) +
-    scale_color_manual(values = c("black", "red")) +
-    theme_classic() + #theme_minimal() + 
-    ylab("Latitude") +
-    xlab("Longitude") +
-    theme(legend.position = "none")
-)
 
 
 write_csv(roads.segmented.df, "06_processed_data/glm_data_2021-04/roads.segmented.df.csv")
