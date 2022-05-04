@@ -14,15 +14,16 @@ library(ggpubr)
 library(cowplot)
 Sys.setenv(LANG = "en")
 
-# A. All carcasses -------------------------------------------------------------
+# A. High certainty carcasses --------------------------------------------------
 
 # ~ 1. Count the roadkills -----------------------------------------------------
 hy_carcasses <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_10-2021.csv", 
                            ";", escape_double = FALSE, trim_ws = TRUE) %>%
-  mutate(death_obs_new = paste0(substr(date_obs, 1, 4), "-", substr(date_obs, 5, 6), "-", substr(date_obs, 7, 8))) %>%
-  mutate(date_obs_new = as.Date(death_obs_new, format = "%Y - %m - %d")) %>%
+  mutate(date_obs_new = paste0(substr(date_obs, 1, 4), "-", substr(date_obs, 5, 6), "-", substr(date_obs, 7, 8))) %>%
+  mutate(date_obs_new = as.Date(date_obs_new, format = "%Y - %m - %d")) %>%
   dplyr::select(-date_obs) %>%
-  rename(date_obs = date_obs_new)
+  rename(date_obs = date_obs_new) %>%
+  filter(location_certainty_score >= 0.75)
 
 
 # ~~~ a. Marion's seasons ------------------------------------------------------
@@ -184,7 +185,7 @@ RVAideMemoire::multinomial.theo.multcomp(x = hy_carcasses_month$n,
 
 # ~ 3. Plot --------------------------------------------------------------------
 
-# ~~~ b. Season -------------------------------------------------
+# ~~~ b. Season ----------------------------------------------------------------
 
 
 # proba <- c(length(seq(start_dry, end_dry, by = "day"))/nbr_days, 
@@ -222,7 +223,7 @@ df_exp_VS_obs <- data.frame(type = c("observed", "observed", "expected", "expect
                                       proba[2] * sum(hy_carcasses_season_w_transit$n[1:2])))
 
 
-plot_seasons <- ggplot(df_exp_VS_obs, aes(x = herds_position, y = value, fill = type)) +
+(plot_seasons <- ggplot(df_exp_VS_obs, aes(x = herds_position, y = value, fill = type)) +
   geom_col(position = position_dodge(),
            color = "black",
            size = 0.5) +
@@ -234,7 +235,7 @@ plot_seasons <- ggplot(df_exp_VS_obs, aes(x = herds_position, y = value, fill = 
                    labels = c("wet", "dry")) + #"north & \nnorth-west", "south-east")) +
   labs(y = "number of carcasses",
        x = "season",
-       fill = "") 
+       fill = "")) 
 
 ggsave(filename = "07_intermediate_results/2021-04/plots/exp_obs_seasons_Serengeti_IV_no_transit.svg",
        width = unit(2.5,"cm"), height = unit(3,"cm"))
@@ -281,11 +282,11 @@ ggsave(filename = "07_intermediate_results/2021-04/plots/exp_obs_seasons_Serenge
 
 hy_carcasses_herds_position <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_10-2021.csv", 
                            ";", escape_double = FALSE, trim_ws = TRUE) %>%
-  mutate(death_obs_new = paste0(substr(date_obs, 1, 4), "-", substr(date_obs, 5, 6), "-", substr(date_obs, 7, 8))) %>%
-  mutate(date_obs_new = as.Date(death_obs_new, format = "%Y - %m - %d")) %>%
+  mutate(date_obs_new = paste0(substr(date_obs, 1, 4), "-", substr(date_obs, 5, 6), "-", substr(date_obs, 7, 8))) %>%
+  mutate(date_obs_new = as.Date(date_obs_new, format = "%Y - %m - %d")) %>%
   dplyr::select(-date_obs) %>%
   rename(date_obs = date_obs_new) %>%
-  filter(GPS_certainty_score > 0) %>%
+  filter(location_certainty_score > 0.75) %>%
   mutate(year = year(date_obs)) %>%
   mutate(herds_position = ifelse(date_obs %within% interval(ymd(paste0(year, "-08-01")), 
                                                               ymd(paste0(year, "-10-31"))), 
@@ -297,17 +298,25 @@ hy_carcasses_herds_position <- read_delim("06_processed_data/carcasses/12_hy.car
                                                                             ymd(paste0(year, "-12-31"))),
                                                "south east", NA)))) %>%
   filter(!is.na(herds_position)) %>%
-  dplyr::select(ID, date_obs, herds_position, long, lat, collision_certainty_score_NEW, GPS_certainty_score, age, sex)
+  dplyr::select(ID, date_obs, herds_position, long, lat, location_certainty_score, age, sex)
 
 hy_carcasses_herds_position_ad <- hy_carcasses_herds_position %>%
   filter(age %in% c("adult", "unknown", "subadult"))
 
-roads.ggplot.map <- read_csv("06_processed_data/glm_data_2021-09/roads.segmented.cropped.no.short.df.csv") %>%
+
+roads.ggplot.map <- read_csv("06_processed_data/glm_data_2021-10/roads.segmented.cropped.no.short.df.csv") %>%
   filter(long > 34.6)
+
+roads <- rgdal::readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
+                        layer = "snp_roads_according_to_FZS_map_cropped")
+roads@data[["osm_id"]] <- seq(from = 1, to = length(roads@data[["osm_id"]]))
+source(file = "05_scripts/04-2021/GLM_2021-10/GLM_functions_calculate_predictors_2021-10.R")
+roads.ggplot.map <- CreateDataFrameRoads(roads) %>%
+  mutate(ID = as.factor(ID))
 
 # With map + violin plots
 (long_lat_scatter <- ggplot() +
-    geom_path(data = roads.ggplot.map, aes(x = long, y = lat, group = ID_road_seg),
+    geom_path(data = roads.ggplot.map, aes(x = long, y = lat, group = ID), #ID_road_seg),
               size = 0.75) +
     geom_point(data = hy_carcasses_herds_position_ad, aes(x = long, y = lat, color = herds_position),
                size = 2) +
@@ -383,7 +392,7 @@ transparent_theme <- theme(
   plot.background = element_rect(fill = "transparent",colour = NA))
 
 (long_lat_scatter <- ggplot() +
-    geom_path(data = roads.ggplot.map, aes(x = long, y = lat, group = ID_road_seg),
+    geom_path(data = roads.ggplot.map, aes(x = long, y = lat, group = ID), # ID_road_seg),
               size = 0.75) +
     geom_point(data = hy_carcasses_herds_position_ad, aes(x = long, y = lat, color = herds_position),
                size = 2) +
@@ -447,23 +456,29 @@ ymin <- min(roads.ggplot.map$lat); ymax <- max(roads.ggplot.map$lat)
 
 long_lat_scatter_complete <- long_lat_scatter + 
   annotation_custom(grob = ylat_violin_grob, 
-                                     xmin = xmax - 0.20, xmax = xmax + 0.15,
-                                     ymin = ymin - 0.1, ymax = ymax + 0.1) +
+                    xmin = xmax - 0.20, xmax = xmax + 0.15,
+                    ymin = ymin - 0.07, ymax = ymax + 0.15) +
   annotation_custom(grob = xlong_violin_grob, 
-                    xmin = xmin - 0.1, xmax = xmax + 0.1,
+                    xmin = xmin + 0.02, xmax = xmax + 0.02,
                     # ymin = ymax - 0.25, ymax = ymax + 0.05)
                     ymin = ymax - 0.4, ymax = ymax + 0.05)
   
+
 (figure <- ggdraw() +
-    draw_plot(plot_seasons, x = 0.04, y = 0, width = 0.37, height = 0.3) + 
-    draw_plot(plot_month, x = 0.04, y = 0.29, width = 0.34, height = 0.35) + 
-    draw_plot(long_lat_scatter_complete, x = 0.39,  y = 0, width = 0.61, height = 0.73) +
+    draw_plot(plot_seasons, x = 0.04, y = 0, width = 0.39, height = 0.3) + 
+    draw_plot(plot_month, x = 0.04, y = 0.29, width = 0.36, height = 0.35) + 
+    draw_plot(long_lat_scatter_complete, x = 0.41,  y = 0, width = 0.59, height = 0.706) +
     draw_plot_label(label = c("(a)", "(b)", "(c)"),
                     x = c(0, 0, 0.36), y = c(0.67, 0.3, 0.67), size = 14) 
   
 )
 
-save_plot("11_manuscript/V3 Figures/figure 3 complete test 2.png", 
+save_plot("11_manuscript/V3 Figures/figure 3 complete test.png", 
+          plot = figure,
+          ncol = 2,
+          nrow = 2,
+          base_asp = 1)
+save_plot("11_manuscript/V3 Figures/figure 3 complete test.svg", 
           plot = figure,
           ncol = 2,
           nrow = 2,
@@ -494,7 +509,6 @@ save_plot("11_manuscript/V3 Figures/figure 3 complete test 2.png",
     draw_plot(plot_position_herds, x = 0.39,  y = 0, width = 0.61, height = 0.65) +
     draw_plot_label(label = c("(a)", "(b)", "(c)"),
                     x = c(0, 0, 0.36), y = c(0.67, 0.3, 0.67), size = 14) 
-  
 )
 
 save_plot("11_manuscript/V3 Figures/figure 3 raw.png", 
@@ -508,139 +522,17 @@ save_plot("11_manuscript/V3 Figures/figure 3 raw.png",
 # ggsave(filename = "07_intermediate_results/2021-04/plots/migratory_herds_adults+subadults_Serengeti IV.svg",
 #        width = unit(6.48,"cm"), height = unit(8.1,"cm"))
 
-# B. Carcasses >= 0.5 ----------------------------------------------------------
-
-# ~ 1. Count the roadkills -----------------------------------------------------
-hy_carcasses_0.5 <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_10-2021.csv", 
-                               ";", escape_double = FALSE, trim_ws = TRUE) %>%
-  mutate(date_obs = as.Date(date_obs, format = "%d / %m / %Y")) %>%
-  filter(collision_certainty_score_NEW >= 0.5)
 
 
-# ~~~ a. Marion's seasons ------------------------------------------------------
-
-start_dry <- as.Date("1989-05-26")
-end_dry <- as.Date("1989-10-31")
-nbr_days <- 365
-
-hy_carcasses_season_0.5 <- hy_carcasses_0.5 %>%
-  mutate(year = year(date_obs), 
-         herds_position = ifelse(date_obs %within% interval(ymd(paste0(year, "-05-26")), 
-                                                              ymd(paste0(year, "-10-31"))), 
-                                 "north west", "south east")) %>%
-  count(herds_position)
-
-
-# With transit
-{
-  start_transit_1 <- as.Date("1989-04-26")
-  end_transit_1 <- as.Date("1989-06-25")
-  start_dry <- as.Date("1989-06-26")
-  end_dry <- as.Date("1989-10-31")
-  start_transit_2 <- as.Date("1989-10-26")
-  end_transit_2 <- as.Date("1989-11-15")
-  start_wet <- as.Date("1989-11-16")
-  end_wet <- as.Date("1990-04-25")
-  nbr_days <- 365
-  }
-hy_carcasses_season_w_transit_0.5 <- hy_carcasses_0.5 %>%
-  mutate(year = year(date_obs), 
-         herds_position_w_transit = ifelse(date_obs %within% interval(ymd(paste0(year, "-06-26")), 
-                                                                        ymd(paste0(year, "-10-25"))), 
-                                           "north west", 
-                                           ifelse(date_obs %within% interval(ymd(paste0(year, "-04-26")), 
-                                                                               ymd(paste0(year, "-06-25"))),
-                                                  "transit",
-                                                  ifelse(date_obs %within% interval(ymd(paste0(year, "-10-26")), 
-                                                                                      ymd(paste0(year, "-11-15"))), 
-                                                         "transit", "south east")))) %>%
-  count(herds_position_w_transit)
-
-
-
-# ~~~ b. Season : Serengeti IV -------------------------------------------------
-
-start_dry <- as.Date("1989-08-01")
-end_dry <- as.Date("1989-10-31")
-start_wet <- as.Date("1989-12-21")
-end_wet <- as.Date("1990-05-10")
-nbr_days <- length(seq(start_dry, end_dry, by = "day")) + length(seq(start_wet, end_wet, by = "day"))
-
-hy_carcasses_season_0.5 <- hy_carcasses_0.5 %>%
-  mutate(year = year(date_obs), 
-         herds_position = ifelse(date_obs %within% interval(ymd(paste0(year, "-08-01")), 
-                                                              ymd(paste0(year, "-10-31"))), 
-                                 "north west", 
-                                 ifelse(date_obs %within% interval(ymd(paste0(year, "-01-01")),
-                                                                     ymd(paste0(year, "-05-10"))),
-                                        "south east", 
-                                        ifelse(date_obs %within% interval(ymd(paste0(year, "-12-21")),
-                                                                            ymd(paste0(year, "-12-31"))),
-                                               "south east", NA)))) %>%
-  count(herds_position) %>%
-  filter(!is.na(herds_position))
-
-
-# ~~~ c. During each month -----------------------------------------------------
-hy_carcasses_month_0.5 <- hy_carcasses_0.5 %>%
-  mutate(month = month(date_obs),
-         year = year(date_obs)) %>%
-  filter(year < 2020) %>%
-  count(month)
-
-sum(hy_carcasses_month_0.5$n)
-
-
-
-# ~ 2. Do the tests ------------------------------------------------------------
-
-# Season (no transit)
-proba <- c(length(seq(start_dry, end_dry, by = "day"))/nbr_days, 
-           (nbr_days - length(seq(start_dry, end_dry, by = "day")))/nbr_days)
-
-dbinom(x = hy_carcasses_season_0.5$n[1], 
-       size = sum(hy_carcasses_season_0.5$n),
-       prob = proba[1])
-
-
-# Season (with transit)
-proba2 <- c(length(seq(start_dry, end_dry, by = "day"))/nbr_days, # North west
-            # South east
-            length(seq(start_wet, end_wet, by = "day"))/nbr_days,
-            #Transit
-            (nbr_days - length(c(seq(start_dry, end_dry, by = "day"),
-                                 seq(start_wet, end_wet, by = "day"))))/nbr_days)
-
-
-RVAideMemoire::multinomial.theo.multcomp(x = hy_carcasses_season_w_transit_0.5$n, 
-                                         p = proba2,  
-                                         prop = FALSE,
-                                         p.method = "fdr")
-
-
-
-
-# Month
-RVAideMemoire::multinomial.theo.multcomp(x = hy_carcasses_month$n, 
-                                         p = c(31/365, 28/365, 31/365, 30/365,
-                                               31/365, 30/365, 31/365, 31/365,
-                                               30/365, 31/365, 30/365, 31/365),  
-                                         prop = FALSE,
-                                         p.method = "fdr")
-
-
-
-# C. Carcasses >= 0.75 ----------------------------------------------------------
+# B. All carcasses ----------------------------------------------------------
 
 # ~ 1. Count the roadkills -----------------------------------------------------
 hy_carcasses_0.75 <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_10-2021.csv", 
                                 ";", escape_double = FALSE, trim_ws = TRUE) %>%
-  mutate(death_obs_new = paste0(substr(date_obs, 1, 4), "-", substr(date_obs, 5, 6), "-", substr(date_obs, 7, 8))) %>%
-  mutate(date_obs_new = as.Date(death_obs_new, format = "%Y - %m - %d")) %>%
+  mutate(date_obs_new = paste0(substr(date_obs, 1, 4), "-", substr(date_obs, 5, 6), "-", substr(date_obs, 7, 8))) %>%
+  mutate(date_obs_new = as.Date(date_obs_new, format = "%Y - %m - %d")) %>%
   dplyr::select(-date_obs) %>%
-  rename(date_obs = date_obs_new) %>%
-  filter(collision_certainty_score_NEW >= 0.75)
-
+  rename(date_obs = date_obs_new)
 
 # ~~~ a. Marion's seasons ------------------------------------------------------
 
@@ -774,7 +666,7 @@ hy.carcasses.decade <- hy_carcasses_formatted %>%
          temp = floor_date(date_obs, years(10)),
          decade = lubridate::year(temp)) %>%
   filter(decade %in% c("1990", "2000", "2010")) %>%
-  dplyr::select(ID, long, lat, collision_certainty_score_NEW, GPS_certainty_score, age, sex, year, decade) %>%
+  dplyr::select(ID, long, lat, collision_certainty_score_NEW, location_certainty_score, age, sex, year, decade) %>%
   mutate(years_by_five = ifelse(year >= 1990 & year <1995, "1990-1994",
                                 ifelse(year >=1995 & year <2000, "1995-1999",
                                        ifelse(year >=2000 & year <2005, "2000-2004", 

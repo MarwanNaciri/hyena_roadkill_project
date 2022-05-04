@@ -1,15 +1,15 @@
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                                                                              #
 #                       Plot the maps of the study area                        #        
 #                                                                              #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 library(rgdal)
 library(raster)
 library(tmap)
 library(tmaptools)
-library(leaflet)
-library(shinyjs)
+# library(leaflet)
+# library(shinyjs)
 library(sp)
 library(sf)
 library(tidyverse)
@@ -19,7 +19,7 @@ Sys.setenv(LANG = "en")
 
 # A. Create the panels ---------------------------------------------------------
 
-# ~ 1. Map Serengeti migration --------
+# ~ 1. Map Serengeti migration -------------------------------------------------
 
 boundary <- readOGR(dsn  = "06_processed_data/borders",
                     layer = "serengeti.mara.ecosystem.09-18")
@@ -75,7 +75,7 @@ crs(background.shp) <- crs(east.africa)
 tmap_mode("view")
 (map_east_africa <- tm_shape(background.shp) + # The blue background
     tm_polygons(col = "#00ace6") +
-
+    
     tm_shape(east.africa) +                   # Country borders
     tm_polygons(col  = "white",  #"#f2efe9", 
                 boundary.col = "black") +
@@ -103,18 +103,17 @@ boundary <- readOGR(dsn  = "06_processed_data/borders",
                     layer = "serengeti.mara.ecosystem.cropped.margin.2021-09")
 
 roads.cropped <- readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
-                 layer = "snp_roads_according_to_FZS_map_cropped")
+                         layer = "snp_roads_according_to_FZS_map_cropped")
 
 major.roads.cropped <- readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS", 
-                       layer = "major_roads_cropped")
+                               layer = "major_roads_cropped")
 
-hy.carcasses <- readOGR(dsn  = "06_processed_data/carcasses",
-                        layer = "hy_carcasses_high_certainty_10-2021")
+hy.carcasses.high.certainty <- readOGR(dsn  = "06_processed_data/carcasses",
+                        layer = "hy_carcasses_high_certainty_2022-04")
 
 
 crop.square.margin <- readOGR(dsn  = "06_processed_data/borders",
                               layer = "crop.square.margin.2021-09")
-
 bbox <-  st_bbox(crop.square.margin)
 
 
@@ -128,7 +127,7 @@ tmap_mode("view")
     tm_shape(major.roads.cropped, bbox = bbox) +
     tm_lines(lty = "solid", col  =  "black", lwd  =  2.5) +
     
-    tm_shape(hy.carcasses, bbox = bbox) +
+    tm_shape(hy.carcasses.high.certainty, bbox = bbox) +
     tm_symbols(size = 0.065, col = "#E69F00", border.lwd = 0.4) +
     
     tm_scale_bar(position=c("left", "bottom"),
@@ -176,17 +175,19 @@ tmap_mode("view")
                  text.size = 0.6,
                  breaks = c(0, 20, 40)) +
     # tm_compass(position = c("left", "top")) +
-    
-    tm_grid(lines = FALSE) +
+    tm_grid(lines = FALSE,
+            labels.show = FALSE) +
     tm_layout(title= "(e)", 
               title.position = c('left', 'top'))
 )
 
 tmap_save(tm = map_amenity_zoom,
-          filename = "07_intermediate_results/maps/amenity_2021-09.png")
-
+          filename = "07_intermediate_results/maps/amenity_2022-04.png")
 save(map_amenity_zoom, 
-     file = "07_intermediate_results/2021-04/maps/map_amenity_zoom_2021-09.RData")
+     file = "07_intermediate_results/2021-04/maps/map_amenity_zoom_2021-09_no_axis.RData")
+
+# save(map_amenity_zoom, 
+#      file = "07_intermediate_results/2021-04/maps/map_amenity_zoom_2021-09.RData")
 
 # tmap_save(tm = map_buildings,
 #           height = 3.525674,
@@ -223,63 +224,63 @@ tmap_mode("view")
                  text.size = 0.6,
                  breaks = c(0, 20, 40)) +
     # tm_compass(position = c("left", "top")) +
-    tm_grid(lines = FALSE) +
+    tm_grid(lines = FALSE,
+            labels.show = FALSE) +
     tm_layout(title= "(f)", 
               title.position = c('left', 'top'))
 )
-
 save(map_rivers_waterbodies_zoom, 
-     file = "07_intermediate_results/2021-04/maps/map_rivers_waterbodies_zoom_2021-09.RData")
+     file = "07_intermediate_results/2021-04/maps/map_rivers_waterbodies_zoom_2021-09_no_labels.RData")
+# save(map_rivers_waterbodies_zoom, 
+#      file = "07_intermediate_results/2021-04/maps/map_rivers_waterbodies_zoom_2021-09.RData")
 
 
 # ~ 7. Map with land cover cropped and zoomed ----------------------------------
 
-# cellStats(land.cover.trimmed, range)
-# hist(land.cover.trimmed)
-# x <- raster::extract(land.cover.trimmed, c(1:ncell(land.cover.trimmed)))
-# 
-# xdf <- data.frame(value = x)
-# counts <- xdf %>%
-#   count(value)
-
-# land.cover <- raster("06_processed_data/land_cover/Reed_2009/serengeti.land.cover.Reed.2009.cropped.zoomed.in.2021-09.tif")
 land.cover <- raster("06_processed_data/land_cover/Reed_2009/serengeti.land.cover.Reed.2009.cropped.greater.serengeti.zoomed.in.2021-09.tif")
-land.cover.trimmed <- trim(x = land.cover, padding = 0, values = 0) # This removes the cells with value 0
+land.cover.coarse <- raster::aggregate(land.cover, fact = 2) # <10 sec. This reduces the resolution
+land.cover.coarse.trimmed <- trim(x = land.cover.coarse, padding = 0, values = 0) # This removes the cells with value 0
 
+legend.land.cover <- read_delim("06_processed_data/land_cover/Reed_2009/land.cover.types.in.SNP_less_detailed.csv", 
+                                ";", escape_double = FALSE, trim_ws = TRUE) # Contains the palette.
+  
+correspondance.land.cover.code <- legend.land.cover %>%
+  dplyr::select(cell_value, color_code)
 
-# boundary <- readOGR(dsn  = "06_processed_data/borders",
-#                     layer = "SNP.lastest.cropped.margin.2021-09")
-boundary <- readOGR(dsn  = "06_processed_data/borders",
-                    layer = "serengeti.mara.ecosystem.cropped.margin.2021-09")
+df_cell_values <- data.frame(cell_value = land.cover.coarse.trimmed[])
 
+df_cell_values_new <- df_cell_values %>%
+  left_join(x = .,
+            y = correspondance.land.cover.code,
+            by = "cell_value")
 
+land.cover.coarse.trimmed.plot <- land.cover.coarse.trimmed
+land.cover.coarse.trimmed.plot[] <- as.factor(df_cell_values_new$color_code) # replace land cover numerical codes by letters
 
-legend.land.cover <- read_delim("06_processed_data/land_cover/Reed_2009/land.cover.types.in.SNP.csv", 
-                                ";", escape_double = FALSE, trim_ws = TRUE) %>% # Contains the palette.
-    filter(present_in_SNP == "yes")
+plot.legend <- legend.land.cover %>%
+  distinct(color_code, color_brewer_2) %>%
+  arrange(color_code)
+
 crop.square.margin <- readOGR(dsn  = "06_processed_data/borders",
                               layer = "crop.square.margin.2021-09")
-
 bbox <-  st_bbox(crop.square.margin)
+boundary <- readOGR(dsn = "06_processed_data/borders",
+                    layer = "serengeti.mara.ecosystem.cropped.margin.2021-09")
 
 tmap_mode("view")
 (map_land_cover_zoom <- 
-    # tm_shape(square.shp) +
-    # tm_polygons(col  =  "white", alpha = 0, boundary.col = "white") +
-    
-    tm_shape(land.cover.trimmed, bbox = bbox) +
-    tm_raster(palette = legend.land.cover$color_brewer,
+    tm_shape(land.cover.coarse.trimmed.plot, bbox = bbox) +
+    tm_raster(palette = plot.legend$color_brewer_2,
               legend.show = FALSE) +
     tm_shape(boundary, bbox = bbox) +
     tm_polygons(col  =  "#5ea65c", alpha = 0, boundary.col = "#5ea65c") +
-
+    
     tm_scale_bar(position = c("left", "bottom"),
                  width = 0.25,
                  text.size = 0.6,
                  breaks = c(0, 20, 40)) +
-    tm_legend(show = FALSE) +
     tm_grid(lines = FALSE) +
-    tm_layout(title= "(g)", 
+    tm_layout(title = "(g)", 
               title.position = c('left', 'top'))
 )
 
@@ -287,10 +288,9 @@ save(map_land_cover_zoom,
      file = "07_intermediate_results/2021-04/maps/map_land_cover_zoom_2021-09.RData")
 
 tmap_save(tm = map_land_cover_zoom,
-          # height = 3.525674,
-          # width = 3.474513,
-          # units = "in",
-          filename = "07_intermediate_results/2021-04/maps/map_land_cover_zoom.png")
+          # height = 3.525674, width = 3.474513, units = "in",
+          filename = "07_intermediate_results/2021-04/maps/map_land_cover_zoom_legend.png")
+
 
 
 # ~ 8. Map with segmented roads cropped and zoomed in --------------------------
@@ -345,6 +345,7 @@ tmap_mode("view")
                  breaks = c(0, 20, 40)) +
     # tm_compass(position = c("left", "top")) +
     tm_grid(lines = FALSE) +
+            # labels.show = c(TRUE, FALSE)) +
     tm_layout(title= "(h)", 
               title.position = c('left', 'top'))
 )
@@ -396,7 +397,9 @@ load("07_intermediate_results/2021-04/maps/map_east_africa_2021-09.RData")
 load("07_intermediate_results/2021-04/maps/map_great_migration_2021-09.RData")
 load("07_intermediate_results/2021-04/maps/map_roads_carcasses_2021-09.RData")
 load("07_intermediate_results/2021-04/maps/map_roads_carcasses_zoom_2021-09.RData")
+# load("07_intermediate_results/2021-04/maps/map_amenity_zoom_2021-09_no_axis.RData")
 load("07_intermediate_results/2021-04/maps/map_amenity_zoom_2021-09.RData")
+# load("07_intermediate_results/2021-04/maps/map_rivers_waterbodies_zoom_2021-09_no_labels.RData")
 load("07_intermediate_results/2021-04/maps/map_rivers_waterbodies_zoom_2021-09.RData")
 load("07_intermediate_results/2021-04/maps/map_land_cover_zoom_2021-09.RData")
 load("07_intermediate_results/2021-04/maps/map_segmented_roads_zoom_2021-09.RData")
@@ -410,127 +413,12 @@ figure <- tmap_arrange(map_east_africa, map_great_migration, map_roads_carcasses
                        widths = c(0.33, 0.33, 0.33,
                                   0.33, 0.33, 0.33,
                                   0.33, 0.33, 0.33),
-                       ncol = 3,
-                       nrow = 3)
+                       ncol = 3, nrow = 3)
 tmap_save(tm = figure,
           # height = 5, width = 8, units = "in",
-          filename = "11_manuscript/V3 Figures/figure 1 raw.png")
+          filename = "11_manuscript/V4 Figures/figure 1 (map) raw.png")
 tmap_save(tm = figure,
-          # height = 5, width = 8, units = "in",
-          filename = "11_manuscript/V3 Figures/figure 1 raw.png")
-tmap_save(tm = figure,
-          filename = "11_manuscript/V3 Figures/figure 1 raw.svg")
-
-
-# figure <- tmap_arrange(map_great_migration, map_roads_carcasses, map_roads_carcasses_zoom,
-#                        map_rivers_waterbodies_zoom, map_amenity_zoom, map_rivers_waterbodies_zoom,
-#                        map_land_cover_zoom, map_segmented_roads_zoom, map_segmented_roads_zoom,
-#                        widths = c(0.33, 0.33, 0.33,
-#                                   0.33, 0.33, 0.33,
-#                                   0.33, 0.33, 0.33),
-#                        ncol = 3,
-#                        nrow = 3)
-# 
-# tmap_save(tm = figure,
-#           # height = 5,
-#           # width = 8,
-#           # units = "in",
-#           filename = "07_intermediate_results/2021-04/maps/figure.test.png")
-# tmap_save(tm = figure,
-#           filename = "07_intermediate_results/2021-04/maps/figure.test.png")
+          filename = "11_manuscript/V4 Figures/figure 1 (map) raw.svg")
 
 
 
-# Temporary figure -------------------
-
-boundary <- readOGR(dsn  = "06_processed_data/borders",
-                    layer = "SNP.lastest")
-
-roads <- readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
-                 layer = "snp_roads_for_analyses_25-05-2021")
-major.roads <- readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS", 
-                       layer = "major_roads")
-
-hy.carcasses <- readOGR(dsn  = "06_processed_data/carcasses",
-                        layer = "hy_carcasses_high_certainty_10-2021")
-
-circle_65km <- readOGR(dsn  =  "06_processed_data/borders",
-                       layer = "circle_65km")
-
-circle_47.5km <- readOGR(dsn  =  "06_processed_data/borders",
-                         layer = "circle_47.5km")
-
-
-
-tmap_mode("view")
-(map_roads_carcasses <- 
-    tm_shape(boundary) +
-    tm_polygons(col  =  "#d6e9d6", alpha = 1, boundary.col = "#5ea65c") +
-    
-    tm_shape(roads) +
-    tm_lines(col  =  "black", lwd  =  1) +
-    tm_shape(major.roads) +
-    tm_lines(lty = "solid", col  =  "black", lwd  =  2.5) +
-    
-    # tm_shape(hy.carcasses) +
-    # tm_symbols(size = 0.08, col = "#E69F00", border.lwd = 0.25) +
-    tm_shape(hy.carcasses) +
-    tm_symbols(size = 0.08, col = age, border.lwd = 0.25) +
-    tm_shape(circle_65km) +
-    tm_polygons(col  =  "#56B4E9", alpha = 0, boundary.col = "#56B4E9", lwd = 2.5) +
-    tm_shape(circle_47.5km) +
-    tm_polygons(col  =  "#56B4E9", alpha = 0, boundary.col = "#56B4E9", lwd = 2.5) +
-    
-    tm_scale_bar(position=c("left", "bottom"),
-                 text.size = 0.6,
-                 breaks = c(0, 25, 50, 100)) +
-    # tm_compass(position = c("left", "top")) +
-    tm_grid(lines = FALSE) +
-    tm_layout(title= "(b)", 
-              title.position = c('left', 'top'))
-)
-
-
-
-
-boundary <- readOGR(dsn  = "06_processed_data/borders",
-                    layer = "SNP.lastest")
-
-roads <- readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS",
-                 layer = "snp_roads_for_analyses_25-05-2021")
-major.roads <- readOGR(dsn  =  "06_processed_data/roads/SNP.roads.QGIS", 
-                       layer = "major_roads")
-
-hy.carcasses <- readOGR(dsn  = "06_processed_data/carcasses",
-                        layer = "hy_carcasses_high_certainty_10-2021")
-
-# Crop
-circle_65km <- readOGR(dsn  =  "06_processed_data/borders",
-                       layer = "circle_65km")
-
-roads.65km <- raster::crop(roads, circle_65km)
-major.roads.65km <- raster::crop(major.roads, circle_65km)
-
-boundary.df <- tidy(boundary)
-roads.df <- tidy(roads.65km)
-major.roads.df <- tidy(major.roads.65km)
-hy.carcasses.df <- as.data.frame(hy.carcasses) %>%
-  filter(long != 0)
-circle_65km_df <- tidy(circle_65km)
-
-hy.carcasses.df <- hy_carcasses %>%
-  filter(age == "subadult",
-         collision_certainty_score_NEW > 0)
-
-(map_roads_carcasses_zoom <- ggplot() +
-    geom_path(data = roads.df, 
-              aes(x = long, y = lat, group = id), size = 0.25) +
-    geom_path(data = major.roads.df, 
-              aes(x = long, y = lat, group = id), size = 0.75) +
-    
-    geom_point(data = hy.carcasses.df,
-               aes(x = long, y = lat, color = sex), size = 1.5)
-)    
-
-ggsave(plot = map_roads_carcasses_zoom, filename = "07_intermediate_results/2021-04/maps/temp.png",
-       height = 6.5, width = 6.5)

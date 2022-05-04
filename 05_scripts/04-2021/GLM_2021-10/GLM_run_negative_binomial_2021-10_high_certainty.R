@@ -21,7 +21,8 @@ buffer.size <- 500
 # buffer.size <- 1000
 
 table.glm <- read_csv(paste0("06_processed_data/glm_data_2021-10_high_certainty/table.glm_9.", 
-                             buffer.size, "m.csv"))
+                             buffer.size, "m.csv")) %>%
+  mutate(road_importance = factor(road_importance, levels = c("minor_road", "major_road")))
 
 # ~~~ Fit the model -----------------
 glm_nb_all <- MASS::glm.nb(formula = nbr_carcasses ~ road_importance + distance_amenity_km

@@ -6,6 +6,7 @@
 
 library(tidyverse)
 library(lubridate)
+library(ggpubr)
 
 # IMPORTANT_____________________________________________________________________
 # Check script in the figures folder, it's older, but there's more code in it
@@ -65,7 +66,7 @@ daily.monitoring.season.no.transit <- daily.monitoring.season %>%
 
 (sampling.season <- ggplot(data = daily.monitoring.season.no.transit, 
                           aes(x = herds_position_w_transit, y = monitoring*100, 
-                              fill = herds_position_w_transit)) +
+                              fill = herds_position_w_transit)) + # , color = year)) +
   geom_boxplot() +
   geom_jitter(width = 0.20) + 
   scale_x_discrete(limits = c("south east", "north west"),
@@ -85,15 +86,6 @@ ggsave("07_intermediate_results/2021-04/plots/sampling_effort/2021-10-08 boxplot
        width = 5, height = 3)
 
 
-
-
-p <- ggboxplot(daily.monitoring.season.no.transit, x = "herds_position_w_transit", 
-               y = "monitoring",
-               fill = "herds_position_w_transit")
-#  Add p-value
-p + stat_compare_means()
-# Change method
-p + stat_compare_means(method = "t.test")
 
 
 # t-test is impossible since the distribution of the percentage of monitoring in the NW is not normal
@@ -167,17 +159,39 @@ save_plot("11_manuscript/V3 Figures/figure S4 raw.svg",
           base_height = 2.5,
           base_asp =  2) #1.618)
 
+# C. By "position of migratory herds" over years -------------------------------
 
-# C. Carcasses found during monitoring -----------------------------------------
-hy_carcasses.monitoring <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_10-2021.csv", 
-                                      ";", escape_double = FALSE, trim_ws = TRUE) %>%
-  mutate(death_obs_new = paste0(substr(date_obs, 1, 4), "-", substr(date_obs, 5, 6), "-", substr(date_obs, 7, 8))) %>%
-  mutate(date_obs_new = as.Date(death_obs_new, format = "%Y - %m - %d")) %>%
-  dplyr::select(-date_obs) %>%
-  rename(date_obs = date_obs_new) %>%
-  mutate(year = year(date_obs)) %>%
-  left_join(x = .,
-            y = daily.monitoring,
-            by = c("date_obs" = "date")) %>%
-  count(monitored)
+daily.monitoring <- read_csv("04_raw_data/hyenas/Daily_monitoring.csv", 
+                             col_types = cols(X1 = col_skip()))
+
+
+daily.monitoring.season <- daily.monitoring %>%
+  mutate(year = year(date),
+         month = month(date)) %>%
+  mutate(herds_position_w_transit = ifelse(date %within% interval(ymd(paste0(year, "-08-01")), 
+                                                                  ymd(paste0(year, "-10-31"))), 
+                                           "north & MMR", 
+                                           ifelse(date %within% interval(ymd(paste0(year, "-05-11")), 
+                                                                         ymd(paste0(year, "-07-31"))),
+                                                  "transit",
+                                                  ifelse(date %within% interval(ymd(paste0(year, "-11-01")), 
+                                                                                ymd(paste0(year, "-12-20"))), 
+                                                         "transit", "south-east")))) %>%
+  group_by(year, herds_position_w_transit) %>%
+  summarise(monitoring = mean(monitored))
+
+# Remove the "transit season"
+daily.monitoring.season.no.transit <- daily.monitoring.season %>%
+  filter(herds_position_w_transit %in% c("north & MMR", "south-east")) %>%
+  mutate(herds_position_w_transit = factor(herds_position_w_transit, 
+                                           levels = c("south-east", "north & MMR")))
+
+ggplot(daily.monitoring.season.no.transit, aes(x = year, y = monitoring*100)) +
+  geom_col() +
+  theme_classic() +
+  facet_wrap(. ~ herds_position_w_transit) +
+  labs(x = "year",
+       y = "percentage of days with \nmonitoring session")
+
+
 

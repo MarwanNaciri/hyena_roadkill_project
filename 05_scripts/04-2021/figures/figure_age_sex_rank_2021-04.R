@@ -7,7 +7,7 @@
 
 library(tidyverse)
 library(ggplot2)
-library(ggthemes)
+# library(ggthemes)
 library(EMT)
 library(RVAideMemoire)
 library(cowplot)
@@ -107,10 +107,6 @@ colnames(proba2) <- c("Adults",
                       "Subadults", 
                       "Cubs")
 
-
-
-# ~ 1. ALL CARCASSES -----------------------------------------------------------
-
 # ~~~ a. Count individuals of each age class ------------
 
 {counts <- hy_carcasses %>%
@@ -178,147 +174,6 @@ df.age <- data.frame(age = c("adults and subadults", "adults and subadults", "cu
 
 ggsave("07_intermediate_results/2021-04/plots/4.2 age expected VS observed with unknowns.png", 
        width = unit(3,"cm"), height = unit(2.5,"cm"))
-
-
-# ~ 2. CARCASSES >= 0.5  ++++------------------------
-
-# ~~~ a. Count individuals of each age class ------------
-
-hy_carcasses_0.5 <- hy_carcasses %>%
-  filter (collision_certainty_score_NEW >= 0.5)
-
-{counts <- hy_carcasses_0.5 %>%
-    count(age,sex)
-  
-  nb.ad.F <- as.numeric(counts[1,3])
-  nb.ad.M <- as.numeric(counts[2,3])
-  nb.ad <- as.numeric(counts[1,3] + counts[2,3] + counts[3,3])
-  nb.sub <- as.numeric(counts[7,3] + counts[8,3] + counts[9,3])
-  nb.cub <- as.numeric(counts[4,3] + counts[5,3] + counts[6,3])
-  nb.unkn <- as.numeric(counts[10,3] + counts[11,3])
-  
-  obs <- c(nb.ad.F, nb.ad.M, nb.sub, nb.cub) #adult males and adult females in separate categories
-  obs1 <- c(nb.ad, nb.sub, nb.cub) 
-  obs2 <- c(nb.ad + nb.unkn, nb.sub, nb.cub) # unknown age considered as adults.
-  }
-
-# ~~~ b. Plot ----------------------------------
-
-# Adults and subadults VS cubs (without unknowns considered adults)
-# df.age <- data.frame(age = c("adults and subadults", "adults and subadults", "cubs", "cubs"),
-#                      type = c("observed", "expected", "observed", "expected"),
-#                      n =  c(obs1[1]+obs1[2], (proba2[1,1]+proba2[1,2])*(nb.ad + nb.sub + nb.cub), 
-#                             obs1[3], proba2[1,3]*(nb.ad + nb.sub + nb.cub)))
-# 
-# ggplot(df.age, aes(x = age, y = n, fill = type)) +
-#   geom_bar(stat = "identity",
-#            position = position_dodge(),
-#            color = "black",
-#            size = 0.5) +
-#   scale_fill_grey(start=0.8, end=0.2) +
-#   theme_classic() +
-#   theme(legend.title = element_blank()) +
-#   scale_x_discrete(limits = c("adults and subadults", "cubs"), 
-#                    labels = c("adults \n& subadults", "cubs")) +
-#   ylab("number of carcasses") +
-#   xlab("")
-# 
-# ggsave("09-02 0.5 age expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
-#        width = unit(3,"cm"), height = unit(2.5,"cm"))
-
-# Adults and subadults VS cubs (with unknowns considered adults)
-df.age <- data.frame(age = c("adults and subadults", "adults and subadults", "cubs", "cubs"),
-                     type = c("observed", "expected", "observed", "expected"),
-                     n =  c(obs2[1]+obs2[2], (proba2[1,1]+proba2[1,2])*sum(counts$n), obs2[3], proba2[1,3]*sum(counts$n)))
-
-(plot.age.0.5 <- ggplot(df.age, aes(x = age, y = n, fill = type)) +
-    geom_bar(stat = "identity",
-             position = position_dodge(),
-             color = "black",
-             size = 0.5) +
-    # scale_fill_grey(start = 0.8, end = 0.2) +
-    scale_fill_manual(values = c("#999999", "#E69F00")) +
-    theme_classic() +
-    theme(legend.title = element_blank()) +
-    scale_x_discrete(limits = c("adults and subadults", "cubs"), 
-                     labels = c("adults \n& subadults", "cubs")) +
-    ylab("number of carcasses") +
-    xlab("")
-)
-
-ggsave("09-02 0.5 age expected VS observed with unknowns.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
-       width = unit(3,"cm"), height = unit(2.5,"cm"))
-
-
-
-# ~ 3. CARCASSES >= 0.75 ++++------------------------
-
-# ~~~ a. Count individuals of each age class ------------
-
-hy_carcasses_0.75 <- hy_carcasses %>%
-  filter (collision_certainty_score_NEW >= 0.75)
-
-counts <- hy_carcasses_0.75 %>%
-  count(age,sex)
-
-nb.ad.F <- as.numeric(counts[1,3])
-nb.ad.M <- as.numeric(counts[2,3])
-nb.ad <- as.numeric(counts[1,3] + counts[2,3] + counts[3,3])
-nb.sub <- as.numeric(counts[7,3] + counts[8,3] + counts[9,3])
-nb.cub <- as.numeric(counts[4,3] + counts[5,3] + counts[6,3])
-nb.unkn <- as.numeric(counts[10,3] + counts[11,3])
-
-obs <- c(nb.ad.F, nb.ad.M, nb.sub, nb.cub) #adult males and adult females in separate categories
-obs1 <- c(nb.ad, nb.sub, nb.cub) 
-obs2 <- c(nb.ad + nb.unkn, nb.sub, nb.cub) # unknown age considered as adults.
-
-
-# ~~~ b. Plot ----------------------------------
-
-# Adults and subadults VS cubs (without unknowns considered adults)
-# df.age <- data.frame(age = c("adults and subadults", "adults and subadults", "cubs", "cubs"),
-#                      type = c("observed", "expected", "observed", "expected"),
-#                      n =  c(obs1[1]+obs1[2], (proba2[1,1]+proba2[1,2])*(nb.ad + nb.sub + nb.cub), 
-#                             obs1[3], proba2[1,3]*(nb.ad + nb.sub + nb.cub)))
-# 
-# ggplot(df.age, aes(x = age, y = n, fill = type)) +
-#   geom_bar(stat = "identity",
-#            position = position_dodge(),
-#            color = "black",
-#            size = 0.5) +
-#   scale_fill_grey(start=0.8, end=0.2) +
-#   theme_classic() +
-#   theme(legend.title = element_blank()) +
-#   scale_x_discrete(limits = c("adults and subadults", "cubs"), 
-#                    labels = c("adults \n& subadults", "cubs")) +
-#   ylab("number of carcasses") +
-#   xlab("")
-# 
-# ggsave("09-02 0.75 age expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
-#        width = unit(3,"cm"), height = unit(2.5,"cm"))
-
-# Adults and subadults VS cubs (with unknowns considered adults)
-df.age <- data.frame(age = c("adults and subadults", "adults and subadults", "cubs", "cubs"),
-                     type = c("observed", "expected", "observed", "expected"),
-                     n =  c(obs2[1]+obs2[2], (proba2[1,1]+proba2[1,2])*sum(counts$n), obs2[3], proba2[1,3]*sum(counts$n)))
-
-(plot.age.0.75 <- ggplot(df.age, aes(x = age, y = n, fill = type)) +
-    geom_bar(stat = "identity",
-             position = position_dodge(),
-             color = "black",
-             size = 0.5) +
-    # scale_fill_grey(start = 0.8, end = 0.2) +
-    scale_fill_manual(values = c("#999999", "#E69F00")) +
-    theme_classic() +
-    theme(legend.title = element_blank()) +
-    scale_x_discrete(limits = c("adults and subadults", "cubs"), 
-                     labels = c("adults \n& subadults", "cubs")) +
-    ylab("number of carcasses") +
-    xlab("")
-)
-ggsave("09-02 0.75 age expected VS observed with unknowns.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
-       width = unit(3,"cm"), height = unit(2.5,"cm"))
-
 
 
 
@@ -403,7 +258,6 @@ ad.sex.ratio <- probabilities[1,1]/(probabilities[1,1] + probabilities[1,2] + pr
 subad.sex.ratio <- probabilities[1,5]/(probabilities[1,5] + probabilities[1,6])
 
 
-# ~ 1. ALL CARCASSES -----------------------------------
 # ~~~ a. Count individuals of each sex ------------
 
 # ----------- Adults --
@@ -529,183 +383,6 @@ ggsave("07_intermediate_results/2021-04/plots/4.2 ad & subad sex expected VS obs
 
 
 
-# ~ 2. CARCASSES >= 0.5  ++++------------------------
-# ~~~ a. Count individuals of each sex ------------
-
-# ----------- Adults --
-ad.counts <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.5,
-         age == "adult",
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.ad.F <- as.numeric(ad.counts[1,2])
-N <- nb.ad.F + as.numeric(ad.counts[2,2])
-
-# Adults With individuals of unknwon age considered adults
-ad.counts.bis <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.5,
-         age %in% c("adult", "unknown"),
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.ad.F.bis <- as.numeric(ad.counts.bis[1,2])
-N.bis <- nb.ad.F + as.numeric(ad.counts.bis[2,2])
-
-
-# ---------- Subadults --
-subad.counts <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.5,
-         age == "subadult",
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.subad.F <- as.numeric(subad.counts[1,2])
-N.subad <- nb.subad.F + as.numeric(subad.counts[2,2])
-
-
-# ~~~ b. Plot -------------
-
-#Adults sex ratio (without unknowns)
-# df.sex.ad <- data.frame(sex = c("females", "females", "males", "males"),
-#                         type = c("observed", "expected", "observed", "expected"),
-#                         n = c(nb.ad.F, N*ad.sex.ratio, N - nb.ad.F, N*(1-ad.sex.ratio)))
-# 
-# ggplot(df.sex.ad, aes(x = sex, y = n, fill = type)) +
-#   geom_bar(stat="identity",
-#            position=position_dodge(),
-#            color = "black",
-#            size = 0.5) +
-#   scale_fill_grey(start=0.8, end=0.2) +
-#   theme_classic() +
-#   theme(legend.title = element_blank()) +
-#   scale_x_discrete(limits=c("females", "males")) +
-#   ylab("number of carcasses") +
-#   xlab("")
-# 
-# ggsave("09-02 0.5 ad sex expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
-#        width = unit(3,"cm"), height = unit(2.5,"cm"))
-
-
-#Adults sex ratio (with unknowns)
-df.sex.ad <- data.frame(sex = c("females", "females", "males", "males"),
-                        type = c("observed", "expected", "observed", "expected"),
-                        n = c(nb.ad.F.bis, N.bis*ad.sex.ratio, N.bis - nb.ad.F.bis, N.bis*(1-ad.sex.ratio)))
-
-(plot.sex.ad.0.5 <- ggplot(df.sex.ad, aes(x = sex, y = n, fill = type)) +
-    geom_bar(stat="identity",
-             position=position_dodge(),
-             color = "black",
-             size = 0.5) +
-    # scale_fill_grey(start = 0.8, end = 0.2) +
-    scale_fill_manual(values = c("#999999", "#E69F00")) +
-    theme_classic() +
-    theme(legend.title = element_blank()) +
-    scale_x_discrete(limits=c("females", "males")) +
-    ylab("number of carcasses") +
-    xlab("")
-)
-ggsave("09-02 0.5 ad sex expected VS observed with unknowns.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
-       width = unit(3,"cm"), height = unit(2.5,"cm"))
-
-
-# Subadults sex ratio 
-df.sex.subad <- data.frame(sex = c("females", "females", "males", "males"),
-                           type = c("observed", "expected", "observed", "expected"),
-                           n = c(nb.subad.F, N.subad*subad.sex.ratio, N.subad - nb.subad.F, N.subad*(1-subad.sex.ratio)))
-
-(plot.sex.subad.0.5 <- ggplot(df.sex.subad, aes(x = sex, y = n, fill = type)) +
-    geom_bar(stat="identity",
-             position=position_dodge(),
-             color = "black",
-             size = 0.5) +
-    # scale_fill_grey(start = 0.8, end = 0.2) +
-    scale_fill_manual(values = c("#999999", "#E69F00")) +
-    theme_classic() +
-    theme(legend.title = element_blank()) +
-    scale_x_discrete(limits=c("females", "males")) +
-    ylab("number of carcasses") +
-    xlab("")
-)
-ggsave("09-02 0.5 subad expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
-       width = unit(3,"cm"), height = unit(2.5,"cm"))
-
-
-# ~ 3. CARCASSES >= 0.75  ++++------------------------
-# ~~~ a. Count individuals of each sex ------------
-
-# ----------- Adults --
-ad.counts <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.75,
-         age == "adult",
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.ad.F <- as.numeric(ad.counts[1,2])
-N <- nb.ad.F + as.numeric(ad.counts[2,2])
-
-# Adults With individuals of unknwon age considered adults
-ad.counts.bis <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.75,
-         age %in% c("adult", "unknown"),
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.ad.F.bis <- as.numeric(ad.counts.bis[1,2])
-N.bis <- nb.ad.F + as.numeric(ad.counts.bis[2,2])
-
-
-# ---------- Subadults --
-subad.counts <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.75,
-         age == "subadult",
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.subad.F <- as.numeric(subad.counts[1,2])
-N.subad <- nb.subad.F + as.numeric(subad.counts[2,2])
-
-
-# ~~~ b. Plot -------------
-
-
-#Adults sex ratio (with unknowns)
-df.sex.ad <- data.frame(sex = c("females", "females", "males", "males"),
-                        type = c("observed", "expected", "observed", "expected"),
-                        n = c(nb.ad.F.bis, N.bis*ad.sex.ratio, N.bis - nb.ad.F.bis, N.bis*(1-ad.sex.ratio)))
-
-(plot.sex.ad.0.75 <- ggplot(df.sex.ad, aes(x = sex, y = n, fill = type)) +
-    geom_bar(stat="identity",
-             position=position_dodge(),
-             color = "black",
-             size = 0.5) +
-    # scale_fill_grey(start = 0.8, end = 0.2) +
-    scale_fill_manual(values = c("#999999", "#E69F00")) +
-    theme_classic() +
-    theme(legend.position = "",
-          legend.title = element_blank()) +
-    scale_x_discrete(limits = c("females", "males")) +
-    ylab("number of carcasses") +
-    xlab("")
-)
-ggsave("09-02 0.75 ad sex expected VS observed with unknowns.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
-       width = unit(3,"cm"), height = unit(2.5,"cm"))
-
-
-# Subadults sex ratio 
-df.sex.subad <- data.frame(sex = c("females", "females", "males", "males"),
-                           type = c("observed", "expected", "observed", "expected"),
-                           n = c(nb.subad.F, N.subad*subad.sex.ratio, N.subad - nb.subad.F, N.subad*(1-subad.sex.ratio)))
-
-(plot.sex.subad.0.75 <- ggplot(df.sex.subad, aes(x = sex, y = n, fill = type)) +
-    geom_bar(stat="identity",
-             position=position_dodge(),
-             color = "black",
-             size = 0.5) +
-    scale_fill_grey(start=0.8, end=0.2) +
-    theme_classic() +
-    theme(legend.title = element_blank()) +
-    scale_x_discrete(limits = c("females", "males")) +
-    ylab("number of carcasses") +
-    xlab("")
-)
-
-ggsave("09-02 0.75 subad sex expected VS observed.svg", path = "07_intermediate_results/2021-04/plots/Age_Sex",
-       width = unit(3,"cm"), height = unit(2.5,"cm"))
 
 
 #___________________________________________________________________________####
@@ -727,7 +404,6 @@ hy_carcasses_clan_members <- hy_carcasses_clan_members %>%
 # hy_carcasses_clan_members_ad <- hy_carcasses_clan_members %>%
 #   filter(age_category == "adult")
 
-# ~~~ b. Plot --------------
 
 # (plot.rank <- ggplot(hy_carcasses_clan_members, 
 #                      aes(x = ID_clan, y = standardized_rank)) +
@@ -855,7 +531,6 @@ ggsave("07_intermediate_results/2021-04/plots/4.4 rank dotplot.4.png",
 #___________________________________________________________________________####
 # D. Construct the figure ======================================================
 
-# ~ 1. ALL CARCASSES -----------------------------------------------------------
 (
   figure.4 <- ggdraw() +
     draw_plot(plot.age, x = 0.02,  y = 0, width = 0.40, height = 1) +
@@ -882,35 +557,4 @@ save_plot("11_manuscript/V3 Figures/figure 4 raw.svg",
           base_height = 1.35,
           base_asp =  2.7) #1.618)
 
-
-# ~ 2. CARCASSES >= 0.75 -------------------------------------------------------
-
-(
-  figure.S3 <- ggdraw() +
-    draw_plot(plot.age.0.75, x = 0.02,  y = 0, width = 0.40, height = 1) +
-    draw_plot(plot.sex.ad.0.75, x = 0.42, y = 0.045, width = 0.27, height = 0.955) +
-
-    draw_plot_label(label = c("(a)", "(b)"),
-                    x = c(0, 0.40), y = c(1, 1), size = 14) 
-  
-)
-
-# save_plot("11_manuscript/V3 Figures/figure S3 raw.png", 
-          #           plot = figure.4,
-#           ncol = 2,
-#           nrow = 2,
-#           base_height = 1.5,
-#           base_asp =  3) #1.618)
-
-
-save_plot("11_manuscript/V3 Figures/figure S3 raw.svg", 
-          plot = figure.S3,
-          ncol = 2,
-          nrow = 2,
-          base_height = 1.35,
-          base_asp =  2.7) #1.618)
-
-
-
-################################### END ########################################
 

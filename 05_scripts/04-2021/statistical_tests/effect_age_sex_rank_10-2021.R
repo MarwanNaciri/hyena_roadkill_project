@@ -5,8 +5,6 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
 
 library(tidyverse)
-library(EMT)
-library(RVAideMemoire)
 Sys.setenv(LANG = "en")
 
 
@@ -104,9 +102,6 @@ proba2 <- cbind(probabilities[1,1] + probabilities[1,2] + probabilities[1,3], # 
 colnames(proba2) <- c("Adults",
                       "Subadults", 
                       "Cubs")
-
-
-# ~ 1. ALL CARCASSES ------------------------------------------------------------
 
 # Count individuals of each age class ------------
 
@@ -254,7 +249,6 @@ ad.sex.ratio <- probabilities[1,1]/(probabilities[1,1] + probabilities[1,2] + pr
 
 subad.sex.ratio <- probabilities[1,5]/(probabilities[1,5] + probabilities[1,6])
 
-# ~ 1. ALL CARCASSES -----------------------------------
 # Count individuals of each sex ------------
 
 # ----------- Adults --
@@ -300,99 +294,7 @@ dbinom(x = nb.subad.F, size = N.subad, prob = subad.sex.ratio)
 
 
 
-# ~ 2. CERTAINTY SCORES >= 0.5 -----------------------------
-# Count individuals of each sex ------------
 
-# ----------- Adults --
-ad.counts <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.5,
-         age == "adult",
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.ad.F <- as.numeric(ad.counts[1,2])
-N <- nb.ad.F + as.numeric(ad.counts[2,2])
-
-# Adults With individuals of unknwon age considered adults
-ad.counts.bis <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.5,
-         age %in% c("adult", "unknown"),
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.ad.F.bis <- as.numeric(ad.counts.bis[1,2])
-N.bis <- nb.ad.F.bis + as.numeric(ad.counts.bis[2,2])
-
-
-# ---------- Subadults --
-subad.counts <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.5,
-         age == "subadult",
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.subad.F <- as.numeric(subad.counts[1,2])
-N.subad <- nb.subad.F + as.numeric(subad.counts[2,2])
-
-
-# Statistical tests -------------
-
-# ----------- Adults --
-dbinom(x = nb.ad.F, size = N, prob = ad.sex.ratio)
-# p = 0.014
-
-# With unknown
-dbinom(x = nb.ad.F.bis, size = N.bis, prob = ad.sex.ratio)
-# p = 0.019
-
-# ---------- Subadults --
-dbinom(x = nb.subad.F, size = N.subad, prob = subad.sex.ratio)
-#♦ p = 0.028
-
-
-
-# ~ 3. CERTAINTY SCORES >= 0.75 -------------------------------
-# Count individuals of each sex ------------
-
-# ----------- Adults --
-ad.counts <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.75,
-         age == "adult",
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.ad.F <- as.numeric(ad.counts[1,2])
-N <- nb.ad.F + as.numeric(ad.counts[2,2])
-
-# Adults With individuals of unknwon age considered adults
-ad.counts.bis <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.75,
-         age %in% c("adult", "unknown"),
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.ad.F.bis <- as.numeric(ad.counts.bis[1,2])
-N.bis <- nb.ad.F.bis + as.numeric(ad.counts.bis[2,2])
-
-
-# ---------- Subadults --
-subad.counts <- hy_carcasses %>%
-  filter(collision_certainty_score_NEW >= 0.75,
-         age == "subadult",
-         sex %in% c("F", "M")) %>%
-  count(sex)
-nb.subad.F <- as.numeric(subad.counts[1,2])
-N.subad <- nb.subad.F + as.numeric(subad.counts[2,2])
-
-
-# Statistical tests -------------
-
-# ----------- Adults --
-dbinom(x = nb.ad.F, size = N, prob = ad.sex.ratio)
-# p = 0.008
-
-# With unknown
-dbinom(x = nb.ad.F.bis, size = N.bis, prob = ad.sex.ratio)
-# p = 0.012
-
-# ---------- Subadults --
-dbinom(x = nb.subad.F, size = N.subad, prob = subad.sex.ratio)
-# p = 0.028
 
 #________________________________________________________________________#######
 ### C. EFFECT OF RANK ==========================================================

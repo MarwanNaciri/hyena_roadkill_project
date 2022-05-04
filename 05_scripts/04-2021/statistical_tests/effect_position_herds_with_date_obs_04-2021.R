@@ -290,7 +290,7 @@ wilcox.test(formula = long ~ herds_position_w_transit,
 
 
 
-# # ~~~ c. For carcasses >=0.75 --------------------------------------------------
+# # ~~~ c. For carcasses >=0.75
 # #lat
 # wilcox.test(formula = lat ~ herds_position_w_transit, 
 #             data = hy_carcasses_herds_position_0.75, 

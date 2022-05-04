@@ -1,8 +1,8 @@
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-#
-#                         Distance to territories 2.0
-#
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#==============================================================================#
+#                                                                              #
+#                           Distance to territories                            #        
+#                                                                              #
+#==============================================================================#
 
 library(tidyverse)
 library(rgdal)
@@ -31,7 +31,7 @@ colnames(clans.df)[1] <- "clan"
 # Load the carcasses of hyenas belonging to the studied clans
 hy.carcasses.clan.members <- read_delim("06_processed_data/carcasses/3_hy.clan.members.csv", 
                                         ";", escape_double = FALSE, trim_ws = TRUE)[1:13,] # Need to select first 13 rows because not
-                                                                                           # there are empty rows
+# there are empty rows
 
 
 # Calculate the distance between each hyena carcass and the average position of the den 
