@@ -1,0 +1,97 @@
+﻿ID_OG;ID;date_obs;sex;age;finder_reporter;from_hyena_project;job;team;handled_by;handled_by_hyena_project
+Ccr_001;Hy_001;19890212;M;subadult;NA;NA;;;unknown;unknown
+Z058;Hy_002;19890326;F;adult;NA;NA;;;unknown;unknown
+Z045;Hy_003;19921224;X;unknown;scientists/staff/vet;no;;;not_hyena_project;no
+Z002;Hy_004;19930306;M;unknown;staff;no;;;unknown;unknown
+Z003;Hy_005;19930308;M;subadult;NA;NA;;;M_East;yes
+Z046;Hy_006;19930314;X;unknown;scientists/staff/vet;no;;;vet;no
+no_name_1;Hy_007;19930402;X;unknown;NA;NA;;;unknown;unknown
+Z006;Hy_008;19930626;X;adult;NA;NA;;;M_East;yes
+Z047;Hy_009;19930717;X;unknown;scientists/staff/vet;no;;;vet;no
+Z048;Hy_010;19930719;X;unknown;scientists/staff/vet;no;;;vet;no
+Z007;Hy_011;19930826;X;adult;staff/vet;NA;;;vet;no
+Z052;Hy_012;19930927;X;unknown;scientists/staff/vet;no;;;not_hyena_project;no
+Z008;Hy_013;19931018;F;adult;Francis Gulland;no;vet;;hyena_project;yes
+Z012;Hy_014;19940109;F;adult;NA;NA;;;unknown;yes
+Z015;Hy_015;19940506;F;adult;NA;NA;;;unknown;unknown
+Z019;Hy_016;19941031;F;adult;teacher;no;;;hyena_project;yes
+Z053;Hy_017;19950228;M;adult;NA;NA;;;M_East;yes
+Z023;Hy_018;19950403;F;adult;Betty;no;;;M_East;yes
+no_name_2;Hy_019;19950415;X;adult;R-P;no;?;?;unknown;no
+Z027;Hy_020;19960310;F;adult;teacher;no;;;M_East;yes
+Z036;Hy_021;19971028;M;subadult;hyena_project;yes;;;hyena_project;yes
+Z037;Hy_022;19980219;X;subadult;Ms M. Msengeya;no;;;K_Wilhem;yes
+Z039;Hy_023;19980316;M;adult;Johan;NA;;;M_East;yes
+Z042;Hy_024;19980615;F;adult;staff;no;;;M_East;yes
+Z085;Hy_025;20000214;M;subadult;tourists;no;;;M_East;yes
+Ccr_305;Hy_026;20000331;X;subadult;NA;NA;;;unknown;unknown
+Z102;Hy_027;20000430;F;adult;NA;NA;;;H_Wilk;no
+Z108;Hy_028;20010218;M;adult;scientists;no;;;J_Nyahongo;unknown
+Z109;Hy_029;20010330;F;adult;NA;NA;;;H_Wiik;no
+Ccr_439;Hy_030;20010420;F;adult;NA;NA;;;H_Wiik;no
+Z110;Hy_031;20010425;F;adult;NA;NA;;;H_Wiik;no
+Z112;Hy_032;20020807;M;adult;NA;NA;;;unknown;no
+Z115;Hy_033;20030224;M;adult;scientists;no;;;carnivore_disease_project;no
+Z123;Hy_034;20031029;F;subadult;hyena_project;yes;;;D_Thierer;yes
+Z130;Hy_035;20040315;F;adult;NA;NA;;;unknown;unknown
+Z117;Hy_036;20040530;F;adult;hyena_project;yes;;;R_Fyumagwa;no
+Z118;Hy_037;20040825;M;subadult;hyena_project;yes;;;D_Thierer;yes
+Z119;Hy_038;20041220;M;adult;NA;NA;;;unknown;unknown
+Z122;Hy_039;20050318;M;subadult;vet;no;;;R_Hoare;no
+Ccr_1261;Hy_040;20050504;F;adult;scientists;no;;;H_Wilk;yes
+Ccr_1184;Hy_041;20050528;F;adult;NA;NA;;;unknown;unknown
+Z125;Hy_042;20060504;M;subadult;scientists;no;;;carnivore_disease_project;no
+Z126;Hy_043;20060819;F;adult;scientists;no;;;N_Burgener;yes
+Z128;Hy_044;20060712;M;adult;scientists;no;;;Mariette_Carnivore disease project;no
+Z129;Hy_045;20060823;F;adult;vet;no;;;vet;yes
+Z140;Hy_046;20110308;F;cub;staff;no;;;M_East;yes
+Z141;Hy_047;20110420;F;adult;NA;NA;;;N_Boyer;yes
+Z142;Hy_048;20110917;F;cub;NA;NA;;;N_Boyer;yes
+Z146;Hy_049;20120219;F;subadult;NA;NA;;;unknown;unknown
+Z143;Hy_050;20120312;M;subadult;NA;NA;;;unknown;unknown
+Z144;Hy_051;20120404;F;adult;scientists;no;scientist;Cheetah project;M_Andris;yes
+Z147;Hy_052;20130212;F;adult;scientists;no;;;M_East;yes
+Z153;Hy_053;20130426;X;cub;NA;NA;;;M_East;yes
+Z154;Hy_054;20130602;X;adult;hyena_project;yes;;;M_Andris;yes
+Z155;Hy_055;20131209;X;subadult;scientists;no;;;M_Andris;yes
+Z156;Hy_056;20140122;F;adult;scientists;no;;;M_Andris;yes
+Z157;Hy_057;20140124;F;adult;staff;no;;;M_Andris;yes
+Z159;Hy_058;20140417;X;adult;scientists;no;;;M_Andris;yes
+Z160;Hy_059;20150208;M;adult;scientists;no;;;Michelle;yes
+Z162;Hy_060;20150215;F;adult;NA;NA;;;unknown;unknown
+Z164;Hy_061;20150603;F;adult;Thomes;yes;;;Michelle;yes
+Z165;Hy_062;20150616;M;adult;hyena_project;yes;;;Michelle;yes
+Z166;Hy_063;20150804;M;adult;NA;NA;;;Michelle;yes
+Z171;Hy_064;20160301;F;adult;grassland project;;;;M_East;yes
+Z172;Hy_065;20160520;M;subadult;Thomes;yes;;;S_Metzger;yes
+Z173;Hy_066;20160528;F;adult;biodiversity project;;;;S_Metzger;yes
+Z174;Hy_067;20160601;F;adult;NA;NA;;;S_Metzger;yes
+Z175;Hy_068;20160609;M;adult;biodiversity project;;;;S_Metzger;yes
+Z176;Hy_069;20160617;M;adult;scientists;no;;;S_Metzger;yes
+Z177;Hy_070;20160624;F;adult;biodiversity project;;;;S_Metzger;yes
+Z178;Hy_071;20160708;F;subadult;M_East;yes;;;S_Metzger;yes
+Z179;Hy_072;20160718;F;adult;scientists;no;;;S_Ferreira;yes
+Z181;Hy_073;20161216;M;subadult;NA;NA;;;M_East;yes
+Z182;Hy_074;20170107;M;adult;hyena_project;yes;;;S_Metzger;yes
+Z183A;Hy_075;20170712;F;adult;S_Metzger;yes;;;S_Metzger;yes
+Z183;Hy_076;20171204;M;adult;hyena_project;yes;;;S_Metzger;yes
+Z185;Hy_077;20180316;F;adult;balloon safari;no;;;S_Metzger;yes
+Z186;Hy_078;20180706;F;adult;S_Metzger;yes;;;S_Metzger;yes
+Z187;Hy_079;20180811;X;cub;S_Metzger;yes;;;S_Metzger;yes
+P518;Hy_080;20190124;F;adult;S_Metzger;yes;;;S_Metzger;yes
+Z188;Hy_081;20190412;X;cub;Zawadi (cheetah project);no;;;S_Metzger;yes
+Z189;Hy_082;20190712;M;cub;balloon safari;no;;;S_Metzger;yes
+Z192;Hy_083;20191115;M;adult;balloon safari;no;;;S_Metzger;yes
+Z193;Hy_085;20200216;F;adult;staff;no;;;S_Metzger;yes
+Z196;Hy_086;20200216;F;adult;staff;no;;;S_Metzger;yes
+no_name_4;Hy_086;20200711;X;cub;scientist;no;;;unknown;unknown
+no_name_5;Hy_087;20211218;F;adult;S_Metzger;yes;;;S_Metzger;yes
+Z201;Hy_088;20211215;X;adult;balloon safari;no;;;S_Metzger;yes
+Z202;Hy_089;20220202;M;adult;balloon safari;no;;;S_Metzger;yes
+Z203;Hy_090;20220205;X;adult;tourists;no;;;nobody;no
+Z204;Hy_091;20220205;X;cub;tourists;no;;;nobody;no
+Z205;Hy_092;20220308;F;adult;scientist;no;;;S_Metzger;yes
+Z206;Hy_093;20220315;X;adult;balloon safari;no;;;S_Metzger;yes
+Z206b;Hy_094;20220322;X;adult;NA;no;;;nobody;no
+Z207;Hy_095;20220404;X;adult;scientist;no;;;nobody;no
+Z208;Hy_096;20220423;F;adult;scientist;no;;;nobody;no

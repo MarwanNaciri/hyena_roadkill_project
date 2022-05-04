@@ -261,11 +261,10 @@ summary(x)
 # C. Year ----------------------------------------------------------------------
 
 # Plot proportion of year monitored and nbr of carcasses -----------------------
-
-hy_carcasses <- read_delim("6_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_04-2021.csv", 
-                           ";", escape_double = FALSE, trim_ws = TRUE) %>%
-  mutate(date_death = as.Date(date_death, format = "%d/%m/%Y"),
-         year = year(date_death),
+hy_carcasses <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_10-2021.csv", 
+           delim = ";", escape_double = FALSE, trim_ws = TRUE) %>%
+  mutate(date_obs = as.Date(date_obs, format = "%d/%m/%Y"),
+         year = year(date_obs),
          ones = 1) %>%
   group_by(year) %>%
   summarize(nbr_carcasses = sum(ones)) %>%

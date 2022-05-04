@@ -30,6 +30,7 @@ snp_roads_according_to_FZS_map: 16-09-2020 this is the road network that corresp
 snp_roads_according_to_FZS_map_cropped: same as above except cropped with the study-area polygon I built on 
                                         16-09-2020 (see in the "border" folder)
 
+major_roads_cropped: same as above except only the main road and the secondary roads are kept.
 				
 
 

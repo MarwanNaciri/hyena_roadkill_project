@@ -76,7 +76,10 @@ process_rivers_2020-03-02.R
 
 06_processed_data/borders/
 06_processed_data/glm_data/
+06_processed_data/glm_data_2021-10/
+06_processed_data/glm_data_2021-10_high_certainty/
 06_processed_data/migration/
+
 
 # In the hyena folder
 06_processed_data/hyenas/Den_locations_processed.csv

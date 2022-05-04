@@ -17,7 +17,6 @@ library(sf)
 library(geosphere)
 library(rgeos)
 
-
 # A. Sample sizes ==============================================================
 
 hy_carcasses <- read_delim("06_processed_data/carcasses/12_hy.carcasses.certainty.formatted.spatial_updated_10-2021.csv", 
