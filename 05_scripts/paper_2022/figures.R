@@ -872,5 +872,5 @@ sampling.month / sampling.season +
   plot_annotation(tag_levels = 'a', tag_prefix = '(',
                   tag_suffix = ')')
 
-ggsave("11_manuscript/V4 Figures/figure S1 (sampling effort).svg",
+ggsave("11_manuscript/V4 Figures/figure S1 (sampling effort) raw.svg",
        width = 14, height = 12, unit = "cm")
